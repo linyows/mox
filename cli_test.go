@@ -32,6 +32,15 @@ func TestRun_cFlag(t *testing.T) {
 	_ = status
 }
 
+func TestRun_rFlag(t *testing.T) {
+	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
+	cli := &CLI{outStream: outStream, errStream: errStream}
+	args := strings.Split("./pox -r", " ")
+
+	status := cli.Run(args)
+	_ = status
+}
+
 func TestRun_vFlag(t *testing.T) {
 	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 	cli := &CLI{outStream: outStream, errStream: errStream}
