@@ -1,0 +1,22 @@
+{
+  [
+    {
+      id: "1",
+      username: "foo",
+      age: 25,
+      gender: "male"
+    },
+    {
+      id: "2",
+      username: "bar",
+      age: 20,
+      gender: "female"
+    },
+    {
+      id: "3",
+      username: "baz",
+      age: 17,
+      gender: "male"
+    }
+  ]
+}
