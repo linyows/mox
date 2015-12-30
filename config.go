@@ -59,3 +59,24 @@ func (c *Config) Merge(otherConfig *Config) *Config {
 
 	return c
 }
+
+// Set sets from Ops
+func (c *Config) Set(o Ops) *Config {
+	if o.Root != "" {
+		c.Root = o.Root
+	}
+	if o.Addr != "" {
+		c.Addr = o.Addr
+	}
+	if o.Type != "" {
+		c.Type = o.Type
+	}
+	if o.Delay != 0 {
+		c.Delay = o.Delay
+	}
+	if o.Loglevel != "" {
+		c.Loglevel = o.Loglevel
+	}
+
+	return c
+}
