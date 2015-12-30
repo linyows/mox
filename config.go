@@ -8,10 +8,11 @@ import (
 )
 
 type Config struct {
-	Root  string
-	Port  int
-	Type  string
-	Delay int
+	Root     string
+	Addr     string
+	Type     string
+	Delay    int
+	Loglevel string
 }
 
 // LoadConfig loads the CLI configuration from "pox.conf" files.
