@@ -38,3 +38,24 @@ func LoadConfig(path string) (*Config, error) {
 
 	return &result, nil
 }
+
+// Merge merges other configurations it self.
+func (c *Config) Merge(otherConfig *Config) *Config {
+	if otherConfig.Root != "" {
+		c.Root = otherConfig.Root
+	}
+	if otherConfig.Addr != "" {
+		c.Addr = otherConfig.Addr
+	}
+	if otherConfig.Type != "" {
+		c.Type = otherConfig.Type
+	}
+	if otherConfig.Delay != 0 {
+		c.Delay = otherConfig.Delay
+	}
+	if otherConfig.Loglevel != "" {
+		c.Loglevel = otherConfig.Loglevel
+	}
+
+	return c
+}
