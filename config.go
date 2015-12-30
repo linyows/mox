@@ -32,15 +32,13 @@ func LoadConfig(path string) (*Config, error) {
 	// Read the HCL file and prepare for parsing
 	d, err := ioutil.ReadFile(path)
 	if err != nil {
-		return nil, fmt.Errorf(
-			"Error reading %s: %s", path, err)
+		return nil, fmt.Errorf("Error reading %s: %s", path, err)
 	}
 
 	// Parse it
 	obj, err := hcl.Parse(string(d))
 	if err != nil {
-		return nil, fmt.Errorf(
-			"Error parsing %s: %s", path, err)
+		return nil, fmt.Errorf("Error parsing %s: %s", path, err)
 	}
 
 	// Build up the result
