@@ -15,6 +15,18 @@ type Config struct {
 	Loglevel string
 }
 
+// DefaultConfig returns default structure.
+func DefaultConfig() *Config {
+	c := &Config{
+		Root:     "/var/www/pox",
+		Addr:     "localhost:8080",
+		Type:     "REST",
+		Delay:    1,
+		Loglevel: "info",
+	}
+	return c
+}
+
 // LoadConfig loads the CLI configuration from "pox.conf" files.
 func LoadConfig(path string) (*Config, error) {
 	// Read the HCL file and prepare for parsing
