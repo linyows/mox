@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/hcl"
 )
 
+// Config is the structure of the configuration for the Pox CLI.
 type Config struct {
 	Root     string
 	Addr     string
