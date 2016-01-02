@@ -12,7 +12,7 @@ Usage
 -----
 
 ```sh
-$ pox --root /var/www/pox --type json-rpc --delay 2 --verbose
+$ pox --root /var/www/pox --protocol json-rpc --delay 2 --loglevel debug
 ```
 
 use config file:
