@@ -81,14 +81,14 @@ func (c *config) Merge(otherConfig *config) *config {
 	if otherConfig.Addr != "" {
 		c.Addr = otherConfig.Addr
 	}
-	if otherConfig.Type != "" {
-		c.Type = otherConfig.Type
+	if otherConfig.Protocol != "" {
+		c.Protocol = strings.ToUpper(otherConfig.Protocol)
 	}
 	if otherConfig.Delay != 0 {
 		c.Delay = otherConfig.Delay
 	}
 	if otherConfig.Loglevel != "" {
-		c.Loglevel = otherConfig.Loglevel
+		c.Loglevel = strings.ToUpper(otherConfig.Loglevel)
 	}
 	if otherConfig.Namespaces != []string(nil) {
 		c.Namespaces = otherConfig.Namespaces
@@ -108,14 +108,14 @@ func (c *config) Set(o Ops) *config {
 	if o.Addr != "" {
 		c.Addr = o.Addr
 	}
-	if o.Type != "" {
-		c.Type = o.Type
+	if o.Protocol != "" {
+		c.Protocol = strings.ToUpper(o.Protocol)
 	}
 	if o.Delay != 0 {
 		c.Delay = o.Delay
 	}
 	if o.Loglevel != "" {
-		c.Loglevel = o.Loglevel
+		c.Loglevel = strings.ToUpper(o.Loglevel)
 	}
 
 	return c
