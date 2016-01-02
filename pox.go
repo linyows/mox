@@ -2,10 +2,10 @@ package main
 
 import "fmt"
 
+// Pox starts server.
 func Pox(ops Ops) int {
-	if ops.Config == "" {
-		ops.Config = "~/.go/src/github.com/linyows/pox/examples/pox.conf"
-	}
+	c := DefaultConfig()
+	c.Set(ops)
 
 	if ops.Config != "" {
 		config, err := LoadConfig(ops.Config)
@@ -13,11 +13,10 @@ func Pox(ops Ops) int {
 			fmt.Sprintf("Error loading CLI configuration: \n\n%s", err)
 			return 1
 		}
-		fmt.Printf("%+v", config)
+		c.Merge(config)
 	}
 
-	s := NewServer()
-	s.Start()
+	Run()
 
 	return 0
 }

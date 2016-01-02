@@ -3,33 +3,54 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 
 	"github.com/hashicorp/hcl"
 )
 
+var instance *config
+
 // Config is the structure of the configuration for the Pox CLI.
-type Config struct {
-	Root     string
-	Addr     string
-	Type     string
-	Delay    int
-	Loglevel string
+type config struct {
+	Root       string
+	Addr       string
+	Type       string
+	Delay      int
+	Loglevel   string
+	Header     map[string]string
+	Namespaces []string
 }
 
 // DefaultConfig returns default structure.
-func DefaultConfig() *Config {
-	c := &Config{
-		Root:     "/var/www/pox",
+func DefaultConfig() *config {
+	hostname, err := os.Hostname()
+	if err != nil {
+		panic(err)
+	}
+
+	root := os.Getenv("POX_ROOT")
+	if root == "" {
+		root = "/var/www/pox"
+	}
+
+	instance = &config{
+		Root:     root,
 		Addr:     "localhost:8080",
 		Type:     "REST",
 		Delay:    1,
-		Loglevel: "info",
+		Loglevel: "INFO",
+		Header: map[string]string{
+			"Server":       hostname,
+			"Content-Type": "application/octet-stream",
+			"X-Served-By":  "pox",
+		},
 	}
-	return c
+
+	return instance
 }
 
 // LoadConfig loads the CLI configuration from "pox.conf" files.
-func LoadConfig(path string) (*Config, error) {
+func LoadConfig(path string) (*config, error) {
 	// Read the HCL file and prepare for parsing
 	d, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -43,7 +64,7 @@ func LoadConfig(path string) (*Config, error) {
 	}
 
 	// Build up the result
-	var result Config
+	var result config
 	if err := hcl.DecodeObject(&result, obj); err != nil {
 		return nil, err
 	}
@@ -52,7 +73,7 @@ func LoadConfig(path string) (*Config, error) {
 }
 
 // Merge merges other configurations it self.
-func (c *Config) Merge(otherConfig *Config) *Config {
+func (c *config) Merge(otherConfig *config) *config {
 	if otherConfig.Root != "" {
 		c.Root = otherConfig.Root
 	}
@@ -68,12 +89,18 @@ func (c *Config) Merge(otherConfig *Config) *Config {
 	if otherConfig.Loglevel != "" {
 		c.Loglevel = otherConfig.Loglevel
 	}
+	if otherConfig.Namespaces != []string(nil) {
+		c.Namespaces = otherConfig.Namespaces
+	}
+	for k, v := range otherConfig.Header {
+		c.Header[k] = v
+	}
 
 	return c
 }
 
 // Set sets from Ops
-func (c *Config) Set(o Ops) *Config {
+func (c *config) Set(o Ops) *config {
 	if o.Root != "" {
 		c.Root = o.Root
 	}
@@ -91,4 +118,12 @@ func (c *Config) Set(o Ops) *Config {
 	}
 
 	return c
+}
+
+// Config returns config singleton structure.
+func Config() *config {
+	if instance == nil {
+		return DefaultConfig()
+	}
+	return instance
 }

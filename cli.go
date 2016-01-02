@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"os"
 )
 
 // Exit codes are int values that represent an exit code for a particular error.
@@ -24,24 +25,27 @@ func (cli *CLI) Run(args []string) int {
 	flags := flag.NewFlagSet(Name, flag.ContinueOnError)
 	flags.SetOutput(cli.errStream)
 
+	conf := os.Getenv("POX_CONF")
+	c := DefaultConfig()
+
 	var ops Ops
-	flags.StringVar(&ops.Config, "config", "", "Pox config path")
-	flags.StringVar(&ops.Config, "c", "", "Pox config path(Short)")
+	flags.StringVar(&ops.Config, "config", conf, "Pox config path")
+	flags.StringVar(&ops.Config, "c", conf, "Pox config path(Short)")
 
-	flags.StringVar(&ops.Root, "root", "/var/www/pox", "Pox response document root")
-	flags.StringVar(&ops.Root, "r", "/var/www/pox", "Pox response document root(Short)")
+	flags.StringVar(&ops.Root, "root", c.Root, "Pox response document root")
+	flags.StringVar(&ops.Root, "r", c.Root, "Pox response document root(Short)")
 
-	flags.StringVar(&ops.Addr, "addr", "localhost:8080", "Server address with port")
-	flags.StringVar(&ops.Addr, "a", "localhost:8080", "Server address with port(Short)")
+	flags.StringVar(&ops.Addr, "addr", c.Addr, "Server address with port")
+	flags.StringVar(&ops.Addr, "a", c.Addr, "Server address with port(Short)")
 
-	flags.StringVar(&ops.Loglevel, "loglevel", "info", "Log level")
-	flags.StringVar(&ops.Loglevel, "l", "info", "Log level(Short)")
+	flags.StringVar(&ops.Loglevel, "loglevel", c.Loglevel, "Log level")
+	flags.StringVar(&ops.Loglevel, "l", c.Loglevel, "Log level(Short)")
 
-	flags.IntVar(&ops.Delay, "delay", 1, "Delay seconds for response")
-	flags.IntVar(&ops.Delay, "d", 1, "Delay seconds for response(Short)")
+	flags.IntVar(&ops.Delay, "delay", c.Delay, "Delay seconds for response")
+	flags.IntVar(&ops.Delay, "d", c.Delay, "Delay seconds for response(Short)")
 
-	flags.StringVar(&ops.Type, "type", "REST", "Api type")
-	flags.StringVar(&ops.Type, "t", "REST", "Api type(Short)")
+	flags.StringVar(&ops.Type, "type", c.Type, "Api type")
+	flags.StringVar(&ops.Type, "t", c.Type, "Api type(Short)")
 
 	flags.BoolVar(&ops.Version, "version", false, "Print version information and quit.")
 
