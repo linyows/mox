@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/hashicorp/hcl"
 )
@@ -14,7 +15,7 @@ var instance *config
 type config struct {
 	Root       string
 	Addr       string
-	Type       string
+	Protocol   string
 	Delay      int
 	Loglevel   string
 	Header     map[string]string
@@ -36,7 +37,7 @@ func DefaultConfig() *config {
 	instance = &config{
 		Root:     root,
 		Addr:     "localhost:8080",
-		Type:     "REST",
+		Protocol: "REST",
 		Delay:    1,
 		Loglevel: "INFO",
 		Header: map[string]string{

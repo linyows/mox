@@ -4,7 +4,7 @@ package main
 type Ops struct {
 	Config   string
 	Root     string
-	Type     string
+	Protocol string
 	Addr     string
 	Delay    int
 	Loglevel string

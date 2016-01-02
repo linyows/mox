@@ -44,8 +44,8 @@ func (cli *CLI) Run(args []string) int {
 	flags.IntVar(&ops.Delay, "delay", c.Delay, "Delay seconds for response")
 	flags.IntVar(&ops.Delay, "d", c.Delay, "Delay seconds for response(Short)")
 
-	flags.StringVar(&ops.Type, "type", c.Type, "Api type")
-	flags.StringVar(&ops.Type, "t", c.Type, "Api type(Short)")
+	flags.StringVar(&ops.Protocol, "protocol", c.Protocol, "Api Protocol")
+	flags.StringVar(&ops.Protocol, "p", c.Protocol, "Api Protocol(Short)")
 
 	flags.BoolVar(&ops.Version, "version", false, "Print version information and quit.")
 
