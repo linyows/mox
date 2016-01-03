@@ -1,6 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+	"os"
+
+	"github.com/hashicorp/logutils"
+)
 
 // Pox starts server.
 func Pox(ops Ops) int {
@@ -16,7 +22,13 @@ func Pox(ops Ops) int {
 		c.Merge(config)
 	}
 
-	Run()
+	filter := &logutils.LevelFilter{
+		Levels:   []logutils.LogLevel{"DEBUG", "INFO", "WARN", "ERROR"},
+		MinLevel: logutils.LogLevel(c.Loglevel),
+		Writer:   os.Stderr,
+	}
+	log.SetOutput(filter)
 
+	Run()
 	return 0
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"mime"
 	"net/http"
 	"path/filepath"
@@ -16,6 +17,8 @@ type ResponseBody struct {
 
 // This method handles all requests.
 func handle(w http.ResponseWriter, r *http.Request) {
+	log.Print("[INFO] " + fmt.Sprintf("%#v", r))
+
 	var proto Protocol
 	c := Config()
 
