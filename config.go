@@ -13,13 +13,14 @@ var instance *config
 
 // Config is the structure of the configuration for the Pox CLI.
 type config struct {
-	Root       string
-	Addr       string
-	Protocol   string
-	Delay      int
-	Loglevel   string
-	Header     map[string]string
-	Namespaces []string
+	Root        string
+	Addr        string
+	Protocol    string
+	Delay       int
+	Loglevel    string
+	AnonymousID string
+	Header      map[string]string
+	Namespaces  []string
 }
 
 // DefaultConfig returns default structure.
@@ -35,11 +36,12 @@ func DefaultConfig() *config {
 	}
 
 	instance = &config{
-		Root:     root,
-		Addr:     "localhost:8080",
-		Protocol: "REST",
-		Delay:    1,
-		Loglevel: "INFO",
+		Root:        root,
+		Addr:        "localhost:8080",
+		Protocol:    "REST",
+		Delay:       1,
+		Loglevel:    "INFO",
+		AnonymousID: "ANONID",
 		Header: map[string]string{
 			"Server":       hostname,
 			"Content-Type": "application/octet-stream",
@@ -89,6 +91,9 @@ func (c *config) Merge(otherConfig *config) *config {
 	}
 	if otherConfig.Loglevel != "" {
 		c.Loglevel = strings.ToUpper(otherConfig.Loglevel)
+	}
+	if otherConfig.AnonymousID != "" {
+		c.AnonymousID = otherConfig.AnonymousID
 	}
 	if otherConfig.Namespaces != []string(nil) {
 		c.Namespaces = otherConfig.Namespaces

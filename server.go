@@ -5,12 +5,18 @@ import (
 	"mime"
 	"net/http"
 	"path/filepath"
+	"text/template"
 	"time"
 )
 
+// ResponseBody is structure
+type ResponseBody struct {
+	ID string
+}
+
 // This method handles all requests.
 func handle(w http.ResponseWriter, r *http.Request) {
-	var protocol Protocol
+	var proto Protocol
 	c := Config()
 
 	if c.Delay > 0 {
@@ -23,22 +29,27 @@ func handle(w http.ResponseWriter, r *http.Request) {
 
 	switch c.Protocol {
 	case "JSON-RPC":
-		protocol = &JSONRPC{}
+		proto = &JSONRPC{}
 	case "REST":
-		protocol = &REST{}
+		proto = &REST{}
 	default:
 		panic(fmt.Sprintf("Error known protocol: %s", c.Protocol))
 	}
 
-	file := protocol.ResponseFile(w, r)
-	ext := filepath.Ext(file)
+	file, id := proto.ResponseFile(w, r)
 
+	ext := filepath.Ext(file)
 	if ext != "" {
 		contentType := mime.TypeByExtension(ext)
 		w.Header().Set("Content-Type", contentType)
 	}
 
-	http.ServeFile(w, r, file)
+	if id != "" && IsFileExist(file) {
+		tpl := template.Must(template.ParseFiles(file))
+		tpl.Execute(w, ResponseBody{ID: id})
+	} else {
+		http.ServeFile(w, r, file)
+	}
 }
 
 // Run server

@@ -4,5 +4,5 @@ import "net/http"
 
 // Protocol is interface
 type Protocol interface {
-	ResponseFile(w http.ResponseWriter, r *http.Request) string
+	ResponseFile(w http.ResponseWriter, r *http.Request) (string, string)
 }
