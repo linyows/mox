@@ -11,7 +11,7 @@ import (
 
 var instance *config
 
-// Config is the structure of the configuration for the Pox CLI.
+// Config is the structure of the configuration for CLI.
 type config struct {
 	Root        string
 	Addr        string
@@ -30,9 +30,9 @@ func DefaultConfig() *config {
 		panic(err)
 	}
 
-	root := os.Getenv("POX_ROOT")
+	root := os.Getenv(strings.ToUpper(Name) + "_ROOT")
 	if root == "" {
-		root = "/var/www/pox"
+		root = "/var/www/" + Name
 	}
 
 	instance = &config{
@@ -45,14 +45,14 @@ func DefaultConfig() *config {
 		Header: map[string]string{
 			"Server":       hostname,
 			"Content-Type": "application/octet-stream",
-			"X-Served-By":  "pox",
+			"X-Served-By":  Name,
 		},
 	}
 
 	return instance
 }
 
-// LoadConfig loads the CLI configuration from "pox.conf" files.
+// LoadConfig loads the CLI configuration from conf files.
 func LoadConfig(path string) (*config, error) {
 	// Read the HCL file and prepare for parsing
 	d, err := ioutil.ReadFile(path)

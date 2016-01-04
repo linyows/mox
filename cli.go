@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 )
 
 // Exit codes are int values that represent an exit code for a particular error.
@@ -25,7 +26,7 @@ func (cli *CLI) Run(args []string) int {
 	flags := flag.NewFlagSet(Name, flag.ContinueOnError)
 	flags.SetOutput(cli.errStream)
 
-	conf := os.Getenv("POX_CONF")
+	conf := os.Getenv(strings.ToUpper(Name) + "_CONF")
 	c := DefaultConfig()
 
 	var ops Ops

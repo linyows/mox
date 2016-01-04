@@ -1,7 +1,7 @@
-Pox
+Mox
 ===
 
-Pox is a very simple mock server as web api.
+Mox is a very simple mock server as web api.
 
 Description
 -----------
@@ -12,13 +12,13 @@ Usage
 -----
 
 ```sh
-$ pox --root /var/www/pox --protocol json-rpc --delay 2 --loglevel debug
+$ mox --root /var/www/mox --protocol json-rpc --delay 2 --loglevel debug
 ```
 
 use config file:
 
 ```sh
-$ pox --config /etc/pox/pox.conf
+$ mox --config /etc/mox/mox.conf
 ```
 
 Install
@@ -27,13 +27,13 @@ Install
 To install, use `go get`:
 
 ```sh
-$ go get -d github.com/linyows/pox
+$ go get -d github.com/linyows/mox
 ```
 
 Contribution
 ------------
 
-1. Fork ([https://github.com/linyows/pox/fork](https://github.com/linyows/pox/fork))
+1. Fork ([https://github.com/linyows/mox/fork](https://github.com/linyows/mox/fork))
 1. Create a feature branch
 1. Commit your changes
 1. Rebase your local changes against the master branch
