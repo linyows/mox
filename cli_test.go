@@ -41,10 +41,19 @@ func TestRun_rFlag(t *testing.T) {
 	_ = status
 }
 
-func TestRun_vFlag(t *testing.T) {
+func TestRun_aFlag(t *testing.T) {
 	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 	cli := &CLI{outStream: outStream, errStream: errStream}
-	args := strings.Split("./mox -v", " ")
+	args := strings.Split("./mox -a", " ")
+
+	status := cli.Run(args)
+	_ = status
+}
+
+func TestRun_lFlag(t *testing.T) {
+	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
+	cli := &CLI{outStream: outStream, errStream: errStream}
+	args := strings.Split("./mox -l", " ")
 
 	status := cli.Run(args)
 	_ = status
@@ -59,10 +68,19 @@ func TestRun_dFlag(t *testing.T) {
 	_ = status
 }
 
-func TestRun_tFlag(t *testing.T) {
+func TestRun_pFlag(t *testing.T) {
 	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 	cli := &CLI{outStream: outStream, errStream: errStream}
-	args := strings.Split("./mox -t", " ")
+	args := strings.Split("./mox -p", " ")
+
+	status := cli.Run(args)
+	_ = status
+}
+
+func TestRun_vFlag(t *testing.T) {
+	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
+	cli := &CLI{outStream: outStream, errStream: errStream}
+	args := strings.Split("./mox -v", " ")
 
 	status := cli.Run(args)
 	_ = status

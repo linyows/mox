@@ -1,7 +1,16 @@
-Mox
-===
+<h1>Mox <img src="https://dl.dropboxusercontent.com/u/759617/mox/black-atom-hi.png" width="27" height="27"></h1>
 
 Mox is a very simple mock server as web api.
+
+[![Travis](https://img.shields.io/travis/linyows/mox.svg?style=flat-square)][travis]
+[![GitHub release](http://img.shields.io/github/release/linyows/mox.svg?style=flat-square)][release]
+[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)][license]
+[![Go Documentation](http://img.shields.io/badge/go-documentation-blue.svg?style=flat-square)][godocs]
+
+[travis]: https://travis-ci.org/linyows/mox
+[release]: https://github.com/linyows/mox/releases
+[license]: https://github.com/linyows/mox/blob/master/LICENSE
+[godocs]: http://godoc.org/github.com/linyows/mox
 
 Description
 -----------
