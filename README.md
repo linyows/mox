@@ -1,5 +1,4 @@
-Mox
-===
+<h1>Mox <img src="https://dl.dropboxusercontent.com/u/759617/mox/black-atom-hi.png" width="27" height="27"></h1>
 
 Mox is a very simple mock server as web api.
 
