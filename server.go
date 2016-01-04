@@ -6,6 +6,7 @@ import (
 	"mime"
 	"net/http"
 	"path/filepath"
+	"strings"
 	"text/template"
 	"time"
 )
@@ -17,17 +18,14 @@ type ResponseBody struct {
 
 // This method handles all requests.
 func handle(w http.ResponseWriter, r *http.Request) {
-	log.Print("[INFO] " + fmt.Sprintf("%#v", r))
-
 	var proto Protocol
 	c := Config()
 
+	log.Print("[INFO] " + fmt.Sprintf("%s - \"%s %s %s\" - \"%s\"",
+		r.RemoteAddr, r.Method, r.RequestURI, r.Proto, strings.Join(r.Header["User-Agent"], ",")))
+
 	if c.Delay > 0 {
 		time.Sleep(time.Duration(c.Delay) * time.Second)
-	}
-
-	for k, v := range c.Header {
-		w.Header().Set(k, v)
 	}
 
 	switch c.Protocol {
@@ -42,9 +40,14 @@ func handle(w http.ResponseWriter, r *http.Request) {
 	file, id := proto.ResponseFile(w, r)
 
 	ext := filepath.Ext(file)
-	if ext != "" {
-		contentType := mime.TypeByExtension(ext)
-		w.Header().Set("Content-Type", contentType)
+	t := "Content-Type"
+
+	for k, v := range c.Header {
+		if k == t && ext != "" {
+			w.Header().Set(t, mime.TypeByExtension(ext))
+		} else {
+			w.Header().Set(k, v)
+		}
 	}
 
 	if id != "" && IsFileExist(file) {
