@@ -16,7 +16,7 @@ func Pox(ops Ops) int {
 	if ops.Config != "" {
 		config, err := LoadConfig(ops.Config)
 		if err != nil {
-			fmt.Sprintf("Error loading CLI configuration: \n\n%s", err)
+			log.Print("[ERROR] " + fmt.Sprintf("Error loading CLI configuration: \n%s", err))
 			return 1
 		}
 		c.Merge(config)

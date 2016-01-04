@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"path"
 )
@@ -29,7 +30,7 @@ func (j *JSONRPC) ResponseFile(w http.ResponseWriter, r *http.Request) (string, 
 	var rpcReq jsonRPCRequest
 	err := decoder.Decode(&rpcReq)
 	if err != nil {
-		fmt.Sprintf("Error json decode: \n\n%s", err)
+		log.Print("[ERROR] " + fmt.Sprintf("Error json decode: \n%s", err))
 	}
 
 	for _, v := range c.Namespaces {
