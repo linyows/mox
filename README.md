@@ -1,3 +1,5 @@
+<img src="https://dl.dropboxusercontent.com/u/759617/mox/black-atom-hi.png" width="200" align="left"><br>
+
 Mox
 ===
 
@@ -12,8 +14,6 @@ Mox
 [release]: https://github.com/linyows/mox/releases
 [license]: https://github.com/linyows/mox/blob/master/LICENSE
 [godocs]: http://godoc.org/github.com/linyows/mox
-
-<img src="https://dl.dropboxusercontent.com/u/759617/mox/black-atom-hi.png" width="160"><br>
 
 Description
 -----------
