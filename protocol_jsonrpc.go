@@ -21,9 +21,7 @@ type jsonRPCRequest struct {
 }
 
 // ResponseFile returns file path
-func (j *JSONRPC) ResponseFile(w http.ResponseWriter, r *http.Request) (string, string) {
-	var file, dir string
-
+func (j *JSONRPC) ResponseFile(w http.ResponseWriter, r *http.Request) (string, map[string]string) {
 	c := Config()
 
 	decoder := json.NewDecoder(r.Body)
@@ -33,24 +31,52 @@ func (j *JSONRPC) ResponseFile(w http.ResponseWriter, r *http.Request) (string, 
 		log.Print("[ERROR] " + fmt.Sprintf("Error json decode: \n%s", err))
 	}
 
+	pathsMap := make(map[string]string)
+	dict := make(map[string]string)
+
 	for _, v := range c.Namespaces {
 		if val, ok := rpcReq.Params[v]; ok {
-			dir = path.Join(dir, val)
+			dict[v] = val
 		}
 	}
 
-	file = path.Join(c.Root, r.RequestURI, dir, rpcReq.Method)
-	if IsFileExist(file) {
-		return file, ""
+	keysMap := dict.Keys()
+	valsMap := dict.Vals()
+	count := len(keysMap)
+
+	for i, v := range keysMap {
+		normalPath := keysMap[:(count - i)]
+		virtPath := valsMap[(count - i):]
+		dir := strings.Join(append(normalPath, virtPath...), "/")
+		p := path.Join(c.Root, r.RequestURI, dir, rpcReq.Method)
+		pathsMap = append(pathsMap, p)
 	}
 
-	f, id := j.splitID(dir, c.AnonymousID)
-	file = path.Join(c.Root, r.RequestURI, f, rpcReq.Method)
-	return file, id
+	for _, file := range pathsMap {
+		if IsFileExist(file) {
+			return file, dict
+		}
+	}
+
+	return "", dict
 }
 
-func (j *JSONRPC) splitID(file string, holder string) (string, string) {
-	_, f := path.Split(path.Clean(file))
-	d := path.Join(path.Dir(path.Clean(file)), holder)
-	return d, f
+func (m *map[string]string) Keys() []string {
+		var keys []string
+
+    for k := range m {
+        keys = append(keys, k)
+    }
+
+		return keys
+}
+
+func (m *map[string]string) Vals() []string {
+		var vals []string
+
+    for v := range m {
+        vals = append(vals, v)
+    }
+
+		return vals
 }
