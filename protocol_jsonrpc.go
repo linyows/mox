@@ -60,23 +60,3 @@ func (j *JSONRPC) ResponseFile(w http.ResponseWriter, r *http.Request) (string, 
 
 	return "", dict
 }
-
-func (m *map[string]string) Keys() []string {
-		var keys []string
-
-    for k := range m {
-        keys = append(keys, k)
-    }
-
-		return keys
-}
-
-func (m *map[string]string) Vals() []string {
-		var vals []string
-
-    for v := range m {
-        vals = append(vals, v)
-    }
-
-		return vals
-}
