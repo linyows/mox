@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"path"
+	"strings"
 )
 
 // JSONRPC is structure
@@ -31,7 +32,7 @@ func (j *JSONRPC) ResponseFile(w http.ResponseWriter, r *http.Request) (string, 
 		log.Print("[ERROR] " + fmt.Sprintf("Error json decode: \n%s", err))
 	}
 
-	pathsMap := make(map[string]string)
+	var pathsOrderReal, pathsOrderVirt []string
 	dict := make(map[string]string)
 
 	for _, v := range c.Namespaces {
@@ -40,19 +41,24 @@ func (j *JSONRPC) ResponseFile(w http.ResponseWriter, r *http.Request) (string, 
 		}
 	}
 
-	keysMap := dict.Keys()
-	valsMap := dict.Vals()
-	count := len(keysMap)
+	keys := MapKeys(dict)
+	vals := MapVals(dict)
+	count := len(keys)
 
-	for i, v := range keysMap {
-		normalPath := keysMap[:(count - i)]
-		virtPath := valsMap[(count - i):]
+	for i := 0; i <= count; i++ {
+		normalPath := keys[:(count - i)]
+		virtPath := vals[(count - i):]
 		dir := strings.Join(append(normalPath, virtPath...), "/")
 		p := path.Join(c.Root, r.RequestURI, dir, rpcReq.Method)
-		pathsMap = append(pathsMap, p)
+		pathsOrderVirt = append(pathsOrderVirt, p)
 	}
 
-	for _, file := range pathsMap {
+	pathsOrderReal = ReverseStrings(pathsOrderVirt)
+	for _, p := range pathsOrderReal {
+		log.Print("[DEBUG] " + fmt.Sprintf("search file: %s", p))
+	}
+
+	for _, file := range pathsOrderReal {
 		if IsFileExist(file) {
 			return file, dict
 		}

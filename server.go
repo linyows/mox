@@ -23,8 +23,10 @@ func handle(w http.ResponseWriter, r *http.Request) {
 
 	log.Print("[INFO] " + fmt.Sprintf("%s - \"%s %s %s\" - \"%s\"",
 		r.RemoteAddr, r.Method, r.RequestURI, r.Proto, strings.Join(r.Header["User-Agent"], ",")))
+	log.Print("[DEBUG] " + fmt.Sprintf("%#v", c))
 
 	if c.Delay > 0 {
+		log.Print("[DEBUG] " + fmt.Sprintf("sleep %vs ...", c.Delay))
 		time.Sleep(time.Duration(c.Delay) * time.Second)
 	}
 
@@ -37,7 +39,10 @@ func handle(w http.ResponseWriter, r *http.Request) {
 		panic(fmt.Sprintf("Error known protocol: %s", c.Protocol))
 	}
 
-	file, id := proto.ResponseFile(w, r)
+	file, dict := proto.ResponseFile(w, r)
+
+	log.Print("[DEBUG] " + fmt.Sprintf("file: %s", file))
+	log.Print("[DEBUG] " + fmt.Sprintf("dict: %s", dict))
 
 	ext := filepath.Ext(file)
 	t := "Content-Type"
@@ -50,9 +55,11 @@ func handle(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if id != "" && IsFileExist(file) {
+	if file != "" && len(dict) > 0 {
 		tpl := template.Must(template.ParseFiles(file))
-		tpl.Execute(w, ResponseBody{ID: id})
+		tpl.Execute(w, dict)
+	} else if file == "" {
+		fmt.Fprint(w, "custom 404")
 	} else {
 		http.ServeFile(w, r, file)
 	}
