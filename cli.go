@@ -39,8 +39,8 @@ func (cli *CLI) Run(args []string) int {
 	flags.StringVar(&ops.Addr, "addr", c.Addr, "Server address with port")
 	flags.StringVar(&ops.Addr, "a", c.Addr, "Server address with port(Short)")
 
-	flags.StringVar(&ops.Loglevel, "loglevel", c.Loglevel, "Log level")
-	flags.StringVar(&ops.Loglevel, "l", c.Loglevel, "Log level(Short)")
+	flags.StringVar(&ops.LogLevel, "log-level", c.LogLevel, "Log level")
+	flags.StringVar(&ops.LogLevel, "l", c.LogLevel, "Log level(Short)")
 
 	flags.IntVar(&ops.Delay, "delay", c.Delay, "Delay seconds for response")
 	flags.IntVar(&ops.Delay, "d", c.Delay, "Delay seconds for response(Short)")

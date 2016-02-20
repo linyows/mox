@@ -17,7 +17,7 @@ type config struct {
 	Addr        string
 	Protocol    string
 	Delay       int
-	Loglevel    string
+	LogLevel    string
 	AnonymousID string
 	Header      map[string]string
 	Namespaces  []string
@@ -40,7 +40,7 @@ func DefaultConfig() *config {
 		Addr:        "localhost:8080",
 		Protocol:    "REST",
 		Delay:       1,
-		Loglevel:    "INFO",
+		LogLevel:    "INFO",
 		AnonymousID: "ANONID",
 		Header: map[string]string{
 			"Server":       hostname,
@@ -89,8 +89,8 @@ func (c *config) Merge(otherConfig *config) *config {
 	if otherConfig.Delay != 0 {
 		c.Delay = otherConfig.Delay
 	}
-	if otherConfig.Loglevel != "" {
-		c.Loglevel = strings.ToUpper(otherConfig.Loglevel)
+	if otherConfig.LogLevel != "" {
+		c.LogLevel = strings.ToUpper(otherConfig.LogLevel)
 	}
 	if otherConfig.AnonymousID != "" {
 		c.AnonymousID = otherConfig.AnonymousID
@@ -119,8 +119,8 @@ func (c *config) Set(o Ops) *config {
 	if o.Delay != 0 {
 		c.Delay = o.Delay
 	}
-	if o.Loglevel != "" {
-		c.Loglevel = strings.ToUpper(o.Loglevel)
+	if o.LogLevel != "" {
+		c.LogLevel = strings.ToUpper(o.LogLevel)
 	}
 
 	return c

@@ -7,6 +7,6 @@ type Ops struct {
 	Protocol string
 	Addr     string
 	Delay    int
-	Loglevel string
+	LogLevel string
 	Version  bool
 }
