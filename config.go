@@ -39,7 +39,7 @@ func DefaultConfig() *config {
 		Root:        root,
 		Addr:        "localhost:8080",
 		Protocol:    "REST",
-		Delay:       1,
+		Delay:       0,
 		LogLevel:    "INFO",
 		AnonymousID: "ANONID",
 		Header: map[string]string{
