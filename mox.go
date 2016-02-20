@@ -22,6 +22,8 @@ func Pox(ops Ops) int {
 		c.Merge(config)
 	}
 
+	c.SetFromEnv()
+
 	filter := &logutils.LevelFilter{
 		Levels:   []logutils.LogLevel{"DEBUG", "INFO", "WARN", "ERROR"},
 		MinLevel: logutils.LogLevel(c.LogLevel),

@@ -30,13 +30,8 @@ func DefaultConfig() *config {
 		panic(err)
 	}
 
-	root := os.Getenv(strings.ToUpper(Name) + "_ROOT")
-	if root == "" {
-		root = "/var/www/" + Name
-	}
-
 	instance = &config{
-		Root:        root,
+		Root:        "/var/www/" + Name,
 		Addr:        "localhost:8080",
 		Protocol:    "REST",
 		Delay:       0,
@@ -121,6 +116,23 @@ func (c *config) Set(o Ops) *config {
 	}
 	if o.LogLevel != "" {
 		c.LogLevel = strings.ToUpper(o.LogLevel)
+	}
+
+	return c
+}
+
+// SetFromEnv sets from env variables
+func (c *config) SetFromEnv() *config {
+	upperName := strings.ToUpper(Name)
+
+	root := os.Getenv(upperName + "_ROOT")
+	if root != "" {
+		c.Root = root
+	}
+
+	addr := os.Getenv(upperName + "_ADDR")
+	if addr != "" {
+		c.Addr = addr
 	}
 
 	return c
