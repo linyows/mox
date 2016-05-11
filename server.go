@@ -19,27 +19,31 @@ type ResponseBody struct {
 // This method handles all requests.
 func handle(w http.ResponseWriter, r *http.Request) {
 	var proto Protocol
-	c := Config()
 
 	log.Print("[INFO] " + fmt.Sprintf("%s - \"%s %s %s\" - \"%s\"",
 		r.RemoteAddr, r.Method, r.RequestURI, r.Proto, strings.Join(r.Header["User-Agent"], ",")))
-	log.Print("[DEBUG] " + fmt.Sprintf("%#v", c))
+	log.Print("[DEBUG] " + fmt.Sprintf("%#v", Config()))
 
-	if c.Delay > 0 {
-		log.Print("[DEBUG] " + fmt.Sprintf("sleep %vs ...", c.Delay))
-		time.Sleep(time.Duration(c.Delay) * time.Second)
+	if Config().Delay > 0 {
+		log.Print("[DEBUG] " + fmt.Sprintf("sleep %vs ...", Config().Delay))
+		time.Sleep(time.Duration(Config().Delay) * time.Second)
 	}
 
-	switch c.Protocol {
+	switch Config().Protocol {
 	case "JSON-RPC":
-		proto = &JSONRPC{}
+		proto = &JSONRPC{
+			req: r,
+		}
+
 	case "REST":
-		proto = &REST{}
+		proto = &REST{
+			req: r,
+		}
 	default:
-		panic(fmt.Sprintf("Error known protocol: %s", c.Protocol))
+		panic(fmt.Sprintf("Error known protocol: %s", Config().Protocol))
 	}
 
-	file, dict := proto.ResponseFile(w, r)
+	file, dict := proto.ResponseFile()
 
 	log.Print("[DEBUG] " + fmt.Sprintf("file: %s", file))
 	log.Print("[DEBUG] " + fmt.Sprintf("dict: %s", dict))
@@ -47,9 +51,13 @@ func handle(w http.ResponseWriter, r *http.Request) {
 	ext := filepath.Ext(file)
 	t := "Content-Type"
 
-	for k, v := range c.Header {
-		if k == t && ext != "" {
-			w.Header().Set(t, mime.TypeByExtension(ext))
+	for k, v := range Config().Header {
+		if k == t {
+			if ext != "" {
+				w.Header().Set(t, mime.TypeByExtension(ext))
+			} else {
+				w.Header().Set(t, Config().Header["Content-Type"])
+			}
 		} else {
 			w.Header().Set(k, v)
 		}
@@ -67,10 +75,8 @@ func handle(w http.ResponseWriter, r *http.Request) {
 
 // Run server
 func Run() {
-	c := Config()
-
 	s := &http.Server{
-		Addr:           c.Addr,
+		Addr:           Config().Addr,
 		Handler:        http.HandlerFunc(handle),
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,

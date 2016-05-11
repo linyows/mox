@@ -90,7 +90,7 @@ func (c *config) Merge(otherConfig *config) *config {
 	if otherConfig.AnonymousID != "" {
 		c.AnonymousID = otherConfig.AnonymousID
 	}
-	if otherConfig.Namespaces != []string(nil) {
+	if len(otherConfig.Namespaces) != 0 {
 		c.Namespaces = otherConfig.Namespaces
 	}
 	for k, v := range otherConfig.Header {
