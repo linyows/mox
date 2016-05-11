@@ -6,11 +6,13 @@ import (
 	"log"
 	"net/http"
 	"path"
+	"path/filepath"
 	"strings"
 )
 
 // JSONRPC is structure
 type JSONRPC struct {
+	req *http.Request
 }
 
 // jsonRPCRequest is structure
@@ -21,11 +23,24 @@ type jsonRPCRequest struct {
 	ID      int
 }
 
-// ResponseFile returns file path
-func (j *JSONRPC) ResponseFile(w http.ResponseWriter, r *http.Request) (string, map[string]string) {
-	c := Config()
+func (j *JSONRPC) targetFile(method string, dir string) string {
+	var ext string
+	ext = filepath.Ext(j.req.RequestURI)
 
-	decoder := json.NewDecoder(r.Body)
+	if ext == "" {
+		if len(j.req.Header["Content-Type"]) != 0 {
+			ext = j.req.Header["Content-Type"][0]
+		} else {
+			ext = Config().Header["Content-Type"]
+		}
+	}
+
+	return path.Join(Config().Root, j.req.RequestURI, dir, method+ext)
+}
+
+// ResponseFile returns file path
+func (j *JSONRPC) ResponseFile() (string, map[string]string) {
+	decoder := json.NewDecoder(j.req.Body)
 	var rpcReq jsonRPCRequest
 	err := decoder.Decode(&rpcReq)
 	if err != nil {
@@ -35,7 +50,7 @@ func (j *JSONRPC) ResponseFile(w http.ResponseWriter, r *http.Request) (string, 
 	var pathsOrderReal, pathsOrderVirt []string
 	dict := make(map[string]string)
 
-	for _, v := range c.Namespaces {
+	for _, v := range Config().Namespaces {
 		if val, ok := rpcReq.Params[v]; ok {
 			dict[v] = val
 		}
@@ -49,8 +64,7 @@ func (j *JSONRPC) ResponseFile(w http.ResponseWriter, r *http.Request) (string, 
 		normalPath := keys[:(count - i)]
 		virtPath := vals[(count - i):]
 		dir := strings.Join(append(normalPath, virtPath...), "/")
-		p := path.Join(c.Root, r.RequestURI, dir, rpcReq.Method)
-		pathsOrderVirt = append(pathsOrderVirt, p)
+		pathsOrderVirt = append(pathsOrderVirt, j.targetFile(rpcReq.Method, dir))
 	}
 
 	pathsOrderReal = ReverseStrings(pathsOrderVirt)

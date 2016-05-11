@@ -5,26 +5,42 @@ import (
 	"log"
 	"net/http"
 	"path"
+	"path/filepath"
 	"strings"
 )
 
 // REST is structure
 type REST struct {
+	req *http.Request
+}
+
+func (re *REST) targetFile() string {
+	var ext string
+	ext = filepath.Ext(re.req.RequestURI)
+
+	if ext == "" {
+		if len(re.req.Header["Content-Type"]) != 0 {
+			ext = re.req.Header["Content-Type"][0]
+		} else {
+			ext = Config().Header["Content-Type"]
+		}
+	}
+
+	return path.Join(Config().Root, re.req.Method+"--"+re.req.RequestURI+ext)
 }
 
 // ResponseFile returns file path
-func (re *REST) ResponseFile(w http.ResponseWriter, r *http.Request) (string, map[string]string) {
-	c := Config()
+func (re *REST) ResponseFile() (string, map[string]string) {
 	dict := make(map[string]string)
 	params := make(map[string]string)
 	var pathsOrderReal, pathsOrderVirt []string
 
-	file := path.Join(c.Root, r.RequestURI+"--"+r.Method)
+	file := re.targetFile()
 	if IsFileExist(file) {
 		return file, dict
 	}
 
-	trimedURL := strings.TrimPrefix(r.RequestURI, "/")
+	trimedURL := strings.TrimPrefix(re.req.RequestURI, "/")
 	arrayPath := strings.Split(trimedURL, "/")
 	for i, v := range arrayPath {
 		if i%2 == 0 {
@@ -33,7 +49,7 @@ func (re *REST) ResponseFile(w http.ResponseWriter, r *http.Request) (string, ma
 		params[v] = arrayPath[i+1]
 	}
 
-	for _, v := range c.Namespaces {
+	for _, v := range Config().Namespaces {
 		if val, ok := params[v]; ok {
 			dict[v] = val
 		}
@@ -47,7 +63,7 @@ func (re *REST) ResponseFile(w http.ResponseWriter, r *http.Request) (string, ma
 		normalPath := keys[:(count - i)]
 		virtPath := vals[(count - i):]
 		dir := strings.Join(append(normalPath, virtPath...), "/")
-		p := path.Join(c.Root, dir+"--"+r.Method)
+		p := path.Join(Config().Root, dir+re.req.Method+"--")
 		pathsOrderVirt = append(pathsOrderVirt, p)
 	}
 
