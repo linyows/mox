@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"mime"
 	"net/http"
 	"path"
 	"path/filepath"
@@ -25,14 +26,28 @@ type jsonRPCRequest struct {
 
 func (j *JSONRPC) targetFile(method string, dir string) string {
 	var ext string
-	ext = filepath.Ext(j.req.RequestURI)
+	var mimeType string
 
-	if ext == "" {
-		if len(j.req.Header["Content-Type"]) != 0 {
-			ext = j.req.Header["Content-Type"][0]
+	reqURI := j.req.RequestURI
+	clientMimes := j.req.Header["Content-Type"]
+	serverMime := Config().Header["Content-Type"]
+	extByURI := filepath.Ext(reqURI)
+
+	if extByURI == "" {
+		if len(clientMimes) != 0 {
+			mimeType = clientMimes[0]
 		} else {
-			ext = Config().Header["Content-Type"]
+			mimeType = serverMime
 		}
+
+		exts, err := mime.ExtensionsByType(mimeType)
+		if err != nil {
+			fmt.Errorf("Error mime to ext %s: %s", mimeType, err)
+		} else {
+			ext = exts[0]
+		}
+	} else {
+		ext = extByURI
 	}
 
 	return path.Join(Config().Root, j.req.RequestURI, dir, method+ext)
