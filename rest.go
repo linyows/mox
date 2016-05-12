@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"mime"
 	"net/http"
 	"path"
 	"path/filepath"
@@ -16,17 +17,35 @@ type REST struct {
 
 func (re *REST) targetFile() string {
 	var ext string
-	ext = filepath.Ext(re.req.RequestURI)
+	var mimeType string
+	var URI string
 
-	if ext == "" {
-		if len(re.req.Header["Content-Type"]) != 0 {
-			ext = re.req.Header["Content-Type"][0]
+	reqURI := re.req.RequestURI
+	clientMimes := re.req.Header["Content-Type"]
+	serverMime := Config().Header["Content-Type"]
+	method := re.req.Method
+	extByURI := filepath.Ext(reqURI)
+	URI = strings.Trim(reqURI, "/")
+
+	if extByURI == "" {
+		if len(clientMimes) != 0 {
+			mimeType = clientMimes[0]
 		} else {
-			ext = Config().Header["Content-Type"]
+			mimeType = serverMime
 		}
+
+		exts, err := mime.ExtensionsByType(mimeType)
+		if err != nil {
+			fmt.Errorf("Error mime to ext %s: %s", mimeType, err)
+		} else {
+			ext = exts[0]
+		}
+		URI = URI + ext
 	}
 
-	return path.Join(Config().Root, re.req.Method+"--"+re.req.RequestURI+ext)
+	dir, file := path.Split(URI)
+
+	return path.Join(Config().Root, dir, method+"--"+file)
 }
 
 // ResponseFile returns file path
@@ -40,13 +59,20 @@ func (re *REST) ResponseFile() (string, map[string]string) {
 		return file, dict
 	}
 
-	trimedURL := strings.TrimPrefix(re.req.RequestURI, "/")
+	trimedURL := strings.Trim(re.req.RequestURI, "/")
 	arrayPath := strings.Split(trimedURL, "/")
+
 	for i, v := range arrayPath {
-		if i%2 == 0 {
+
+		if i != 0 && i%2 != 0 {
 			continue
 		}
-		params[v] = arrayPath[i+1]
+
+		next := i + 1
+		if len(arrayPath) <= next {
+			break
+		}
+		params[v] = arrayPath[next]
 	}
 
 	for _, v := range Config().Namespaces {
@@ -62,8 +88,11 @@ func (re *REST) ResponseFile() (string, map[string]string) {
 	for i := 0; i <= count; i++ {
 		normalPath := keys[:(count - i)]
 		virtPath := vals[(count - i):]
+
 		dir := strings.Join(append(normalPath, virtPath...), "/")
-		p := path.Join(Config().Root, dir+re.req.Method+"--")
+		ext := filepath.Ext(file)
+
+		p := path.Join(Config().Root, dir, re.req.Method+"--"+Config().AnonymousID+ext)
 		pathsOrderVirt = append(pathsOrderVirt, p)
 	}
 
@@ -72,5 +101,11 @@ func (re *REST) ResponseFile() (string, map[string]string) {
 		log.Print("[DEBUG] " + fmt.Sprintf("search file: %s", p))
 	}
 
-	return file, dict
+	for _, file := range pathsOrderReal {
+		if IsFileExist(file) {
+			return file, dict
+		}
+	}
+
+	return "", dict
 }
