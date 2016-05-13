@@ -9,6 +9,8 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+
+	"github.com/mattn/go-scan"
 )
 
 // JSONRPC is structure
@@ -20,11 +22,11 @@ type JSONRPC struct {
 type jsonRPCRequest struct {
 	Jsonrpc string
 	Method  string
-	Params  map[string]string
+	Params  interface{}
 	ID      int
 }
 
-func (j *JSONRPC) targetFile(method string, dir string) string {
+func (j *JSONRPC) buildFileExt() string {
 	var ext string
 	var mimeType string
 
@@ -50,7 +52,7 @@ func (j *JSONRPC) targetFile(method string, dir string) string {
 		ext = extByURI
 	}
 
-	return path.Join(Config().Root, j.req.RequestURI, dir, method+ext)
+	return ext
 }
 
 // ResponseFile returns file path
@@ -65,21 +67,30 @@ func (j *JSONRPC) ResponseFile() (string, map[string]string) {
 	var pathsOrderReal, pathsOrderVirt []string
 	dict := make(map[string]string)
 
+	var s string
 	for _, v := range Config().Namespaces {
-		if val, ok := rpcReq.Params[v]; ok {
-			dict[v] = val
+		err = scan.ScanTree(rpcReq.Params, "/"+v, &s)
+		if err != nil {
+			continue
 		}
+		dict[v] = s
 	}
 
+	var src string
+	ext := j.buildFileExt()
 	keys := MapKeys(dict)
 	vals := MapVals(dict)
 	count := len(keys)
+
+	src = path.Join(Config().Root, j.req.RequestURI, rpcReq.Method+ext)
+	pathsOrderVirt = append(pathsOrderVirt, src)
 
 	for i := 0; i <= count; i++ {
 		normalPath := keys[:(count - i)]
 		virtPath := vals[(count - i):]
 		dir := strings.Join(append(normalPath, virtPath...), "/")
-		pathsOrderVirt = append(pathsOrderVirt, j.targetFile(rpcReq.Method, dir))
+		src = path.Join(Config().Root, j.req.RequestURI, dir, rpcReq.Method+ext)
+		pathsOrderVirt = append(pathsOrderVirt, src)
 	}
 
 	pathsOrderReal = ReverseStrings(pathsOrderVirt)
