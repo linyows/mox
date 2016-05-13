@@ -7,10 +7,12 @@ default: test
 
 deps:
 	go get -d -t ./...
-	go get golang.org/x/tools/cmd/cover
-	go get golang.org/x/tools/cmd/vet
 	go get github.com/hashicorp/logutils
 	go get github.com/mattn/go-scan
+	go get github.com/golang/lint/golint
+	go get golang.org/x/tools/cmd/cover
+	go get github.com/pierrre/gotestcover
+	go get github.com/mattn/goveralls
 
 depsdev:
 	go get -u github.com/mitchellh/gox
@@ -19,12 +21,9 @@ depsdev:
 test: deps
 	go test -v $(TEST) $(TESTARGS) -timeout=30s -parallel=4
 	go test -race $(TEST) $(TESTARGS)
-	go vet .
 
 cover: deps
-	go test $(TEST) -coverprofile=coverage.out
-	go tool cover -html=coverage.out
-	rm coverage.out
+	gotestcover -v -covermode=count -coverprofile=coverage.out -parallelpackages=4 ./...
 
 bin: depsdev
 	@sh -c "'$(CURDIR)/scripts/build.sh' $(NAME)"
