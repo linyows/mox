@@ -1,4 +1,4 @@
-FROM golang:1.5.2
+FROM golang:1.6
 
 RUN apt-get update -qq && apt-get install -y -qq wget unzip supervisor
 RUN wget -q https://github.com/linyows/mox/releases/download/v0.2.0/linux_amd64.zip && \
@@ -13,6 +13,6 @@ ENV MOX_CONF="/mox/mox.conf" \
 
 RUN mkdir /mox
 WORKDIR /mox
-ADD ../test-fixtures/rest /mox
+ADD ../fixtures/rest /mox
 
 CMD ["supervisord", "-n"]
