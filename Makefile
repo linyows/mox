@@ -10,6 +10,7 @@ deps:
 	go get golang.org/x/tools/cmd/cover
 	go get golang.org/x/tools/cmd/vet
 	go get github.com/hashicorp/logutils
+	go get github.com/mattn/go-scan
 
 depsdev:
 	go get -u github.com/mitchellh/gox
