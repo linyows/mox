@@ -15,7 +15,8 @@ import (
 
 // JSONRPC is structure
 type JSONRPC struct {
-	req *http.Request
+	req    *http.Request
+	rpcReq jsonRPCRequest
 }
 
 // jsonRPCRequest is structure
@@ -26,7 +27,29 @@ type jsonRPCRequest struct {
 	ID      int
 }
 
-func (j *JSONRPC) buildFileExt() string {
+// ResponseFile returns file path
+func (j *JSONRPC) ResponseFile() (string, map[string]string) {
+	decoder := json.NewDecoder(j.req.Body)
+
+	err := decoder.Decode(&j.rpcReq)
+	if err != nil {
+		log.Print("[ERROR] " + fmt.Sprintf("Error json decode: \n%s", err))
+	}
+
+	dict := j.dictionary()
+	files := j.nominatedFiles(dict)
+
+	for _, file := range files {
+		if IsFileExist(file) {
+			return file, dict
+		}
+	}
+
+	return "", dict
+}
+
+// fileExt returns a extension
+func (j *JSONRPC) fileExt() string {
 	var ext string
 	var mimeType string
 
@@ -55,54 +78,47 @@ func (j *JSONRPC) buildFileExt() string {
 	return ext
 }
 
-// ResponseFile returns file path
-func (j *JSONRPC) ResponseFile() (string, map[string]string) {
-	decoder := json.NewDecoder(j.req.Body)
-	var rpcReq jsonRPCRequest
-	err := decoder.Decode(&rpcReq)
-	if err != nil {
-		log.Print("[ERROR] " + fmt.Sprintf("Error json decode: \n%s", err))
-	}
-
-	var pathsOrderReal, pathsOrderVirt []string
+// dictionary returns resources
+func (j *JSONRPC) dictionary() map[string]string {
 	dict := make(map[string]string)
-
 	var s string
+
 	for _, v := range Config().Namespaces {
-		err = scan.ScanTree(rpcReq.Params, "/"+v, &s)
+		err := scan.ScanTree(j.rpcReq.Params, "/"+v, &s)
 		if err != nil {
 			continue
 		}
 		dict[v] = s
 	}
 
+	return dict
+}
+
+// nominatedfiles returns file paths
+func (j *JSONRPC) nominatedFiles(dict map[string]string) []string {
+	var pathsOrderReal, pathsOrderVirt []string
 	var src string
-	ext := j.buildFileExt()
+
+	ext := j.fileExt()
 	keys := MapKeys(dict)
 	vals := MapVals(dict)
 	count := len(keys)
 
-	src = path.Join(Config().Root, j.req.RequestURI, rpcReq.Method+ext)
+	src = path.Join(Config().Root, j.req.RequestURI, j.rpcReq.Method+ext)
 	pathsOrderVirt = append(pathsOrderVirt, src)
 
 	for i := 0; i <= count; i++ {
 		normalPath := keys[:(count - i)]
 		virtPath := vals[(count - i):]
 		dir := strings.Join(append(normalPath, virtPath...), "/")
-		src = path.Join(Config().Root, j.req.RequestURI, dir, rpcReq.Method+ext)
+		src = path.Join(Config().Root, j.req.RequestURI, dir, j.rpcReq.Method+ext)
 		pathsOrderVirt = append(pathsOrderVirt, src)
 	}
 
 	pathsOrderReal = ReverseStrings(pathsOrderVirt)
 	for _, p := range pathsOrderReal {
-		log.Print("[DEBUG] " + fmt.Sprintf("search file: %s", p))
+		log.Print("[DEBUG] " + fmt.Sprintf("nominated file: %s", p))
 	}
 
-	for _, file := range pathsOrderReal {
-		if IsFileExist(file) {
-			return file, dict
-		}
-	}
-
-	return "", dict
+	return pathsOrderReal
 }
