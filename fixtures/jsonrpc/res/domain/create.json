@@ -1,0 +1,7 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "domain": "foo.com"
+  },
+  "id": "1"
+}
