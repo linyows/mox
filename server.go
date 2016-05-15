@@ -5,7 +5,6 @@ import (
 	"log"
 	"mime"
 	"net/http"
-	"path/filepath"
 	"strings"
 	"text/template"
 	"time"
@@ -48,16 +47,10 @@ func handle(w http.ResponseWriter, r *http.Request) {
 	log.Print("[DEBUG] " + fmt.Sprintf("file: %s", file))
 	log.Print("[DEBUG] " + fmt.Sprintf("dict: %s", dict))
 
-	ext := filepath.Ext(file)
 	t := "Content-Type"
-
 	for k, v := range Config().Header {
 		if k == t {
-			if ext != "" {
-				w.Header().Set(t, mime.TypeByExtension(ext))
-			} else {
-				w.Header().Set(t, Config().Header["Content-Type"])
-			}
+			w.Header().Set(t, mime.TypeByExtension(proto.ResponseExt()))
 		} else {
 			w.Header().Set(k, v)
 		}

@@ -12,55 +12,67 @@ import (
 
 // REST is structure
 type REST struct {
-	req *http.Request
+	req         *http.Request
+	responseExt string
 }
 
-func (re *REST) targetFile() string {
-	var ext string
-	var mimeType string
-	var URI string
+// ResponseFile returns file path
+func (re *REST) ResponseFile() (string, map[string]string) {
+	reqURI := strings.Trim(re.req.RequestURI, "/") + re.ResponseExt()
+	dir, file := path.Split(reqURI)
+	src := path.Join(Config().Root, dir, re.localFormat(file))
 
-	reqURI := re.req.RequestURI
+	if IsFileExist(src) {
+		return src, make(map[string]string)
+	}
+
+	dict := re.dictionary(reqURI)
+	srcs := re.nominatedFiles(dict)
+
+	for _, src := range srcs {
+		if IsFileExist(src) {
+			return src, dict
+		}
+	}
+
+	return "", dict
+}
+
+// ResponseExt returns file extension
+func (re *REST) ResponseExt() string {
+	if re.responseExt != "" {
+		return re.responseExt
+	}
+
+	var mimeType string
 	clientMimes := re.req.Header["Content-Type"]
-	serverMime := Config().Header["Content-Type"]
-	method := re.req.Method
-	extByURI := filepath.Ext(reqURI)
-	URI = strings.Trim(reqURI, "/")
+	extByURI := filepath.Ext(re.req.RequestURI)
 
 	if extByURI == "" {
 		if len(clientMimes) != 0 {
 			mimeType = clientMimes[0]
 		} else {
-			mimeType = serverMime
+			mimeType = Config().Header["Content-Type"]
 		}
-
 		exts, err := mime.ExtensionsByType(mimeType)
 		if err != nil {
-			fmt.Errorf("Error mime to ext %s: %s", mimeType, err)
-		} else {
-			ext = exts[0]
+			log.Print("[ERROR] " + fmt.Sprintf("Error mime to ext %s: \n%s", mimeType, err))
+			return ""
 		}
-		URI = URI + ext
+		re.responseExt = exts[0]
+	} else {
+		re.responseExt = extByURI
 	}
 
-	dir, file := path.Split(URI)
-
-	return path.Join(Config().Root, dir, method+"--"+file)
+	return re.responseExt
 }
 
-// ResponseFile returns file path
-func (re *REST) ResponseFile() (string, map[string]string) {
+// dictionary returns resources
+func (re *REST) dictionary(URI string) map[string]string {
 	dict := make(map[string]string)
 	params := make(map[string]string)
-	var pathsOrderReal, pathsOrderVirt []string
 
-	file := re.targetFile()
-	if IsFileExist(file) {
-		return file, dict
-	}
-
-	trimedURL := strings.Trim(re.req.RequestURI, "/")
-	arrayPath := strings.Split(trimedURL, "/")
+	arrayPath := strings.Split(URI, "/")
 
 	for i, v := range arrayPath {
 
@@ -77,9 +89,16 @@ func (re *REST) ResponseFile() (string, map[string]string) {
 
 	for _, v := range Config().Namespaces {
 		if val, ok := params[v]; ok {
-			dict[v] = val
+			dict[v] = re.removeExt(val)
 		}
 	}
+
+	return dict
+}
+
+// nominatedfiles returns file paths
+func (re *REST) nominatedFiles(dict map[string]string) []string {
+	var pathsOrderReal, pathsOrderVirt []string
 
 	keys := MapKeys(dict)
 	vals := MapVals(dict)
@@ -88,24 +107,25 @@ func (re *REST) ResponseFile() (string, map[string]string) {
 	for i := 0; i <= count; i++ {
 		normalPath := keys[:(count - i)]
 		virtPath := vals[(count - i):]
-
 		dir := strings.Join(append(normalPath, virtPath...), "/")
-		ext := filepath.Ext(file)
-
-		p := path.Join(Config().Root, dir, re.req.Method+"--"+Config().AnonymousID+ext)
-		pathsOrderVirt = append(pathsOrderVirt, p)
+		path := path.Join(Config().Root, dir, re.localFormat(Config().AnonymousID+re.ResponseExt()))
+		pathsOrderVirt = append(pathsOrderVirt, path)
 	}
 
 	pathsOrderReal = ReverseStrings(pathsOrderVirt)
 	for _, p := range pathsOrderReal {
-		log.Print("[DEBUG] " + fmt.Sprintf("search file: %s", p))
+		log.Print("[DEBUG] " + fmt.Sprintf("Nominated file: %s", p))
 	}
 
-	for _, file := range pathsOrderReal {
-		if IsFileExist(file) {
-			return file, dict
-		}
-	}
+	return pathsOrderReal
+}
 
-	return "", dict
+// removeExt returns file name without extension
+func (re *REST) removeExt(file string) string {
+	return file[0 : len(file)-len(filepath.Ext(file))]
+}
+
+// localFormat returns path for local
+func (re *REST) localFormat(file string) string {
+	return re.req.Method + "--" + file
 }
