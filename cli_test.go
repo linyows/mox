@@ -10,7 +10,7 @@ import (
 func TestRun_versionFlag(t *testing.T) {
 	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 	cli := &CLI{outStream: outStream, errStream: errStream}
-	args := strings.Split("./mox -version", " ")
+	args := strings.Split("mox --version", " ")
 
 	status := cli.Run(args)
 	if status != ExitCodeOK {
@@ -26,7 +26,7 @@ func TestRun_versionFlag(t *testing.T) {
 func TestRun_cFlag(t *testing.T) {
 	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 	cli := &CLI{outStream: outStream, errStream: errStream}
-	args := strings.Split("./mox -c", " ")
+	args := strings.Split("mox -c", " ")
 
 	status := cli.Run(args)
 	_ = status
@@ -35,7 +35,7 @@ func TestRun_cFlag(t *testing.T) {
 func TestRun_rFlag(t *testing.T) {
 	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 	cli := &CLI{outStream: outStream, errStream: errStream}
-	args := strings.Split("./mox -r", " ")
+	args := strings.Split("mox -r", " ")
 
 	status := cli.Run(args)
 	_ = status
@@ -44,7 +44,7 @@ func TestRun_rFlag(t *testing.T) {
 func TestRun_aFlag(t *testing.T) {
 	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 	cli := &CLI{outStream: outStream, errStream: errStream}
-	args := strings.Split("./mox -a", " ")
+	args := strings.Split("mox -a", " ")
 
 	status := cli.Run(args)
 	_ = status
@@ -53,7 +53,7 @@ func TestRun_aFlag(t *testing.T) {
 func TestRun_lFlag(t *testing.T) {
 	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 	cli := &CLI{outStream: outStream, errStream: errStream}
-	args := strings.Split("./mox -l", " ")
+	args := strings.Split("mox -l", " ")
 
 	status := cli.Run(args)
 	_ = status
@@ -62,7 +62,7 @@ func TestRun_lFlag(t *testing.T) {
 func TestRun_dFlag(t *testing.T) {
 	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 	cli := &CLI{outStream: outStream, errStream: errStream}
-	args := strings.Split("./mox -d", " ")
+	args := strings.Split("mox -d", " ")
 
 	status := cli.Run(args)
 	_ = status
@@ -71,7 +71,7 @@ func TestRun_dFlag(t *testing.T) {
 func TestRun_pFlag(t *testing.T) {
 	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 	cli := &CLI{outStream: outStream, errStream: errStream}
-	args := strings.Split("./mox -p", " ")
+	args := strings.Split("mox -p", " ")
 
 	status := cli.Run(args)
 	_ = status
@@ -80,7 +80,7 @@ func TestRun_pFlag(t *testing.T) {
 func TestRun_vFlag(t *testing.T) {
 	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 	cli := &CLI{outStream: outStream, errStream: errStream}
-	args := strings.Split("./mox -v", " ")
+	args := strings.Split("mox -v", " ")
 
 	status := cli.Run(args)
 	_ = status
