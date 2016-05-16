@@ -1,5 +1,3 @@
-<img src="https://dl.dropboxusercontent.com/u/759617/mox/black-atom-hi.png" width="200" align="left"><br>
-
 Mox
 ===
 
@@ -32,6 +30,10 @@ use config file:
 ```sh
 $ mox --config /etc/mox/mox.conf
 ```
+
+### Dockefile:
+
+https://github.com/linyows/mox/blob/master/misc/Dockerfile
 
 Install
 -------
