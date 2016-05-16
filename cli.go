@@ -21,6 +21,17 @@ type CLI struct {
 	outStream, errStream io.Writer
 }
 
+// Ops structure
+type Ops struct {
+	Config   string
+	Root     string
+	Protocol string
+	Addr     string
+	Delay    int
+	LogLevel string
+	Version  bool
+}
+
 // Run invokes the CLI with the given arguments.
 func (cli *CLI) Run(args []string) int {
 	flags := flag.NewFlagSet(Name, flag.ContinueOnError)
