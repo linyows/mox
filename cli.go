@@ -48,8 +48,8 @@ func (cli *CLI) Run(args []string) int {
 				_, usage := flag.UnquoteUsage(f)
 				num := 12 - len(f.Name)
 				s += strings.Repeat(" ", num) + usage
-				if !(f.DefValue == "" || f.DefValue == "false" || f.DefValue == "0") {
-					s += fmt.Sprintf(" (default %v)", f.DefValue)
+				if !(f.DefValue == "" || f.DefValue == "false") {
+					s += fmt.Sprintf(" (default: %v)", f.DefValue)
 				}
 				fmt.Fprint(os.Stderr, s, "\n")
 			}
@@ -63,10 +63,10 @@ func (cli *CLI) Run(args []string) int {
 	flags.StringVar(&ops.Config, "config", conf, "config path")
 	flags.StringVar(&ops.Config, "c", conf, "")
 
-	flags.StringVar(&ops.Root, "root", c.Root, "document root")
+	flags.StringVar(&ops.Root, "root", c.Root, "document root path")
 	flags.StringVar(&ops.Root, "r", c.Root, "")
 
-	flags.StringVar(&ops.Addr, "addr", c.Addr, "address with port")
+	flags.StringVar(&ops.Addr, "addr", c.Addr, "network address with port")
 	flags.StringVar(&ops.Addr, "a", c.Addr, "")
 
 	flags.StringVar(&ops.LogLevel, "log-level", c.LogLevel, "log level")
@@ -75,7 +75,7 @@ func (cli *CLI) Run(args []string) int {
 	flags.IntVar(&ops.Delay, "delay", c.Delay, "delay seconds for response")
 	flags.IntVar(&ops.Delay, "d", c.Delay, "")
 
-	flags.StringVar(&ops.Protocol, "protocol", c.Protocol, "api protocol")
+	flags.StringVar(&ops.Protocol, "protocol", c.Protocol, "api protocol -- REST or JSON-RPC")
 	flags.StringVar(&ops.Protocol, "p", c.Protocol, "")
 
 	flags.BoolVar(&ops.Version, "version", false, "print the version and exit")
