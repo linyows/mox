@@ -44,8 +44,8 @@ func handle(w http.ResponseWriter, r *http.Request) {
 
 	file, dict := proto.ResponseFile()
 
-	log.Print("[DEBUG] " + fmt.Sprintf("file: %s", file))
-	log.Print("[DEBUG] " + fmt.Sprintf("dict: %s", dict))
+	log.Print("[DEBUG] " + fmt.Sprintf("File: %s", file))
+	log.Print("[DEBUG] " + fmt.Sprintf("Dict: %s", dict))
 
 	t := "Content-Type"
 	for k, v := range Config().Header {
@@ -56,11 +56,11 @@ func handle(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if file != "" && len(dict) > 0 {
+	if file != "" && len(dict["keys"]) > 0 {
 		tpl := template.Must(template.ParseFiles(file))
-		tpl.Execute(w, dict)
+		tpl.Execute(w, CombineKeyValues(dict["keys"], dict["values"]))
 	} else if file == "" {
-		fmt.Fprint(w, "custom 404")
+		fmt.Fprint(w, "404")
 	} else {
 		http.ServeFile(w, r, file)
 	}

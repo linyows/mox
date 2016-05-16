@@ -29,7 +29,7 @@ type jsonRPCRequest struct {
 }
 
 // ResponseFile returns file path
-func (j *JSONRPC) ResponseFile() (string, map[string]string) {
+func (j *JSONRPC) ResponseFile() (string, map[string][]string) {
 	decoder := json.NewDecoder(j.req.Body)
 
 	err := decoder.Decode(&j.rpcReq)
@@ -74,30 +74,35 @@ func (j *JSONRPC) ResponseExt() string {
 }
 
 // dictionary returns resources
-func (j *JSONRPC) dictionary() map[string]string {
-	dict := make(map[string]string)
+func (j *JSONRPC) dictionary() map[string][]string {
+	var keys []string
+	var vals []string
 	var s string
 
 	for _, v := range Config().Namespaces {
 		err := scan.ScanTree(j.rpcReq.Params, "/"+v, &s)
 		if err != nil {
-			log.Print("[DEBUG] " + fmt.Sprintf("Param \"%s\" not found: \n%s", v, err))
+			log.Print("[DEBUG] " + fmt.Sprintf("JSON parsed, but \"%s\" not found -- %s", v, err))
 			continue
 		}
-		dict[v] = s
+		keys = append(keys, v)
+		vals = append(vals, s)
 	}
 
-	return dict
+	return map[string][]string{
+		"keys":   keys,
+		"values": vals,
+	}
 }
 
 // nominatedfiles returns file paths
-func (j *JSONRPC) nominatedFiles(dict map[string]string) []string {
+func (j *JSONRPC) nominatedFiles(dict map[string][]string) []string {
 	var pathsOrderReal, pathsOrderVirt []string
 	var src string
 
-	keys := MapKeys(dict)
-	vals := MapVals(dict)
-	count := len(keys)
+	keys := dict["keys"]
+	vals := dict["values"]
+	count := len(dict["keys"])
 
 	src = path.Join(Config().Root, j.req.RequestURI, j.rpcReq.Method+j.ResponseExt())
 	pathsOrderVirt = append(pathsOrderVirt, src)

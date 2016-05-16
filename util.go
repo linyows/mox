@@ -10,26 +10,15 @@ func IsFileExist(f string) bool {
 	return err == nil
 }
 
-// MapKeys returns array
-func MapKeys(m map[string]string) []string {
-	var keys []string
+// CombineKeyValues returns Map
+func CombineKeyValues(keys []string, values []string) map[string]string {
+	keyValues := make(map[string]string)
 
-	for k := range m {
-		keys = append(keys, k)
+	for i, key := range keys {
+		keyValues[key] = values[i]
 	}
 
-	return keys
-}
-
-// MapVals returns array
-func MapVals(m map[string]string) []string {
-	var vals []string
-
-	for _, v := range m {
-		vals = append(vals, v)
-	}
-
-	return vals
+	return keyValues
 }
 
 // ReverseStrings reverses array
