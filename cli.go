@@ -38,11 +38,11 @@ func (cli *CLI) Run(args []string) int {
 	flags.SetOutput(cli.errStream)
 
 	flags.Usage = func() {
-		fmt.Fprintf(os.Stderr, "\nUsage: %s [options]\n\nOptions:\n", Name)
+		fmt.Fprintf(cli.errStream, "\nUsage: %s [options]\n\nOptions:\n", Name)
 		flags.VisitAll(func(f *flag.Flag) {
 			if len(f.Name) == 1 {
 				s := fmt.Sprintf("  -%s", f.Name)
-				fmt.Fprint(os.Stderr, s, ",")
+				fmt.Fprint(cli.errStream, s, ",")
 			} else {
 				s := fmt.Sprintf(" --%s", f.Name)
 				_, usage := flag.UnquoteUsage(f)
@@ -51,7 +51,7 @@ func (cli *CLI) Run(args []string) int {
 				if !(f.DefValue == "" || f.DefValue == "false") {
 					s += fmt.Sprintf(" (default: %v)", f.DefValue)
 				}
-				fmt.Fprint(os.Stderr, s, "\n")
+				fmt.Fprint(cli.errStream, s, "\n")
 			}
 		})
 	}
