@@ -1,4 +1,7 @@
 package main
 
+// Name of Package
 const Name string = "mox"
-const Version string = "0.2.0"
+
+// Version of Package
+const Version string = "0.2.1"

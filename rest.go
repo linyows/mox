@@ -17,13 +17,13 @@ type REST struct {
 }
 
 // ResponseFile returns file path
-func (re *REST) ResponseFile() (string, map[string]string) {
+func (re *REST) ResponseFile() (string, map[string][]string) {
 	reqURI := strings.Trim(re.req.RequestURI, "/") + re.ResponseExt()
 	dir, file := path.Split(reqURI)
 	src := path.Join(Config().Root, dir, re.localFormat(file))
 
 	if IsFileExist(src) {
-		return src, make(map[string]string)
+		return src, make(map[string][]string)
 	}
 
 	dict := re.dictionary(reqURI)
@@ -68,8 +68,9 @@ func (re *REST) ResponseExt() string {
 }
 
 // dictionary returns resources
-func (re *REST) dictionary(URI string) map[string]string {
-	dict := make(map[string]string)
+func (re *REST) dictionary(URI string) map[string][]string {
+	var keys []string
+	var vals []string
 	params := make(map[string]string)
 
 	arrayPath := strings.Split(URI, "/")
@@ -89,20 +90,24 @@ func (re *REST) dictionary(URI string) map[string]string {
 
 	for _, v := range Config().Namespaces {
 		if val, ok := params[v]; ok {
-			dict[v] = re.removeExt(val)
+			keys = append(keys, v)
+			vals = append(vals, re.removeExt(val))
 		}
 	}
 
-	return dict
+	return map[string][]string{
+		"keys":   keys,
+		"values": vals,
+	}
 }
 
 // nominatedfiles returns file paths
-func (re *REST) nominatedFiles(dict map[string]string) []string {
+func (re *REST) nominatedFiles(dict map[string][]string) []string {
 	var pathsOrderReal, pathsOrderVirt []string
 
-	keys := MapKeys(dict)
-	vals := MapVals(dict)
-	count := len(keys)
+	keys := dict["keys"]
+	vals := dict["values"]
+	count := len(dict["keys"])
 
 	for i := 0; i <= count; i++ {
 		normalPath := keys[:(count - i)]

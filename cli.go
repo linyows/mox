@@ -1,11 +1,12 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"io"
 	"os"
 	"strings"
+
+	flag "github.com/docker/docker/pkg/mflag"
 )
 
 // Exit codes are int values that represent an exit code for a particular error.
@@ -32,54 +33,39 @@ type Ops struct {
 	Version  bool
 }
 
+var usageText = `
+Usage: mox [options]
+
+Options:`
+
+var exampleText = `
+Example:
+  $ mox --root /var/www/mox --protocol json-rpc --delay 1 --log-level debug
+  $ mox --config /etc/mox.conf
+`
+
 // Run invokes the CLI with the given arguments.
 func (cli *CLI) Run(args []string) int {
 	flags := flag.NewFlagSet(Name, flag.ContinueOnError)
 	flags.SetOutput(cli.errStream)
 
 	flags.Usage = func() {
-		fmt.Fprintf(cli.errStream, "\nUsage: %s [options]\n\nOptions:\n", Name)
-		flags.VisitAll(func(f *flag.Flag) {
-			if len(f.Name) == 1 {
-				s := fmt.Sprintf("  -%s", f.Name)
-				fmt.Fprint(cli.errStream, s, ",")
-			} else {
-				s := fmt.Sprintf(" --%s", f.Name)
-				_, usage := flag.UnquoteUsage(f)
-				num := 12 - len(f.Name)
-				s += strings.Repeat(" ", num) + usage
-				if !(f.DefValue == "" || f.DefValue == "false") {
-					s += fmt.Sprintf(" (default: %v)", f.DefValue)
-				}
-				fmt.Fprint(cli.errStream, s, "\n")
-			}
-		})
+		fmt.Fprintf(cli.errStream, usageText)
+		flags.PrintDefaults()
+		fmt.Fprint(cli.errStream, exampleText)
 	}
 
 	conf := os.Getenv(strings.ToUpper(Name) + "_CONF")
 	c := DefaultConfig()
 
 	var ops Ops
-	flags.StringVar(&ops.Config, "config", conf, "config path")
-	flags.StringVar(&ops.Config, "c", conf, "")
-
-	flags.StringVar(&ops.Root, "root", c.Root, "document root path")
-	flags.StringVar(&ops.Root, "r", c.Root, "")
-
-	flags.StringVar(&ops.Addr, "addr", c.Addr, "network address with port")
-	flags.StringVar(&ops.Addr, "a", c.Addr, "")
-
-	flags.StringVar(&ops.LogLevel, "log-level", c.LogLevel, "log level")
-	flags.StringVar(&ops.LogLevel, "l", c.LogLevel, "")
-
-	flags.IntVar(&ops.Delay, "delay", c.Delay, "delay seconds for response")
-	flags.IntVar(&ops.Delay, "d", c.Delay, "")
-
-	flags.StringVar(&ops.Protocol, "protocol", c.Protocol, "api protocol -- REST or JSON-RPC")
-	flags.StringVar(&ops.Protocol, "p", c.Protocol, "")
-
-	flags.BoolVar(&ops.Version, "version", false, "print the version and exit")
-	flags.BoolVar(&ops.Version, "v", false, "")
+	flags.StringVar(&ops.Config, []string{"c", "-config"}, conf, "config path")
+	flags.StringVar(&ops.Root, []string{"r", "-root"}, c.Root, "document root path")
+	flags.StringVar(&ops.Addr, []string{"a", "-addr"}, c.Addr, "network address with port")
+	flags.StringVar(&ops.LogLevel, []string{"l", "-log-level"}, c.LogLevel, "log level")
+	flags.IntVar(&ops.Delay, []string{"d", "-delay"}, c.Delay, "delay seconds for response")
+	flags.StringVar(&ops.Protocol, []string{"p", "-protocol"}, c.Protocol, "api protocol -- REST or JSON-RPC")
+	flags.BoolVar(&ops.Version, []string{"v", "-version"}, false, "print the version and exit")
 
 	if err := flags.Parse(args[1:]); err != nil {
 		return ExitCodeError
