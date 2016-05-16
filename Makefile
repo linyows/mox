@@ -15,6 +15,7 @@ deps:
 	go get github.com/mattn/goveralls
 
 depsdev:
+	go get -u github.com/docker/docker/pkg/mflag
 	go get -u github.com/mitchellh/gox
 	go get -u github.com/tcnksm/ghr
 
