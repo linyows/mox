@@ -7,6 +7,7 @@ default: test
 
 deps:
 	go get -d -t ./...
+	go get -u github.com/docker/docker/pkg/mflag
 	go get github.com/hashicorp/logutils
 	go get github.com/mattn/go-scan
 	go get github.com/golang/lint/golint
@@ -15,7 +16,6 @@ deps:
 	go get github.com/mattn/goveralls
 
 depsdev:
-	go get -u github.com/docker/docker/pkg/mflag
 	go get -u github.com/mitchellh/gox
 	go get -u github.com/tcnksm/ghr
 
