@@ -1,6 +1,9 @@
 language: go
 go:
+  - 1.6
   - 1.5
-  - 1.4
 script:
   - make test
+  - make cover
+after_script:
+- goveralls -coverprofile=coverage.out

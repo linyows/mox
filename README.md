@@ -24,7 +24,7 @@ Usage
 -----
 
 ```sh
-$ mox --root /var/www/mox --protocol json-rpc --delay 2 --loglevel debug
+$ mox --root /var/www/mox --protocol json-rpc --delay 1 --log-level debug
 ```
 
 use config file:

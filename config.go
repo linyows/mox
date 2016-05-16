@@ -17,7 +17,7 @@ type config struct {
 	Addr        string
 	Protocol    string
 	Delay       int
-	Loglevel    string
+	LogLevel    string
 	AnonymousID string
 	Header      map[string]string
 	Namespaces  []string
@@ -30,17 +30,12 @@ func DefaultConfig() *config {
 		panic(err)
 	}
 
-	root := os.Getenv(strings.ToUpper(Name) + "_ROOT")
-	if root == "" {
-		root = "/var/www/" + Name
-	}
-
 	instance = &config{
-		Root:        root,
+		Root:        "/var/www/" + Name,
 		Addr:        "localhost:8080",
 		Protocol:    "REST",
-		Delay:       1,
-		Loglevel:    "INFO",
+		Delay:       0,
+		LogLevel:    "INFO",
 		AnonymousID: "ANONID",
 		Header: map[string]string{
 			"Server":       hostname,
@@ -89,13 +84,13 @@ func (c *config) Merge(otherConfig *config) *config {
 	if otherConfig.Delay != 0 {
 		c.Delay = otherConfig.Delay
 	}
-	if otherConfig.Loglevel != "" {
-		c.Loglevel = strings.ToUpper(otherConfig.Loglevel)
+	if otherConfig.LogLevel != "" {
+		c.LogLevel = strings.ToUpper(otherConfig.LogLevel)
 	}
 	if otherConfig.AnonymousID != "" {
 		c.AnonymousID = otherConfig.AnonymousID
 	}
-	if otherConfig.Namespaces != []string(nil) {
+	if len(otherConfig.Namespaces) != 0 {
 		c.Namespaces = otherConfig.Namespaces
 	}
 	for k, v := range otherConfig.Header {
@@ -119,8 +114,25 @@ func (c *config) Set(o Ops) *config {
 	if o.Delay != 0 {
 		c.Delay = o.Delay
 	}
-	if o.Loglevel != "" {
-		c.Loglevel = strings.ToUpper(o.Loglevel)
+	if o.LogLevel != "" {
+		c.LogLevel = strings.ToUpper(o.LogLevel)
+	}
+
+	return c
+}
+
+// SetFromEnv sets from env variables
+func (c *config) SetFromEnv() *config {
+	upperName := strings.ToUpper(Name)
+
+	root := os.Getenv(upperName + "_ROOT")
+	if root != "" {
+		c.Root = root
+	}
+
+	addr := os.Getenv(upperName + "_ADDR")
+	if addr != "" {
+		c.Addr = addr
 	}
 
 	return c

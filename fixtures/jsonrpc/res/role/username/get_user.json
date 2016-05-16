@@ -1,8 +1,8 @@
 {
   "jsonrpc": "2.0",
   "result": {
-    "role": "admin",
-    "username": "{{.ID}}",
+    "role": "{{.role}}",
+    "username": "{{.username}}",
     "age": 25,
     "gender": "male"
   },

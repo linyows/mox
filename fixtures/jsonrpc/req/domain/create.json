@@ -1,0 +1,11 @@
+{
+  "jsonrpc": "2.0",
+  "method": "create",
+  "id": 1,
+  "params": {
+    "account": "foo",
+    "name": "foo.com",
+    "ttl": 300,
+    "private": true
+  }
+}
