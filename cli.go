@@ -76,5 +76,5 @@ func (cli *CLI) Run(args []string) int {
 		return ExitCodeOK
 	}
 
-	return Pox(ops)
+	return Mox(ops)
 }

@@ -8,8 +8,8 @@ import (
 	"github.com/hashicorp/logutils"
 )
 
-// Pox starts server.
-func Pox(ops Ops) int {
+// Mox starts server.
+func Mox(ops Ops) int {
 	c := DefaultConfig()
 	c.Set(ops)
 
