@@ -34,3 +34,16 @@ func TestReverseStrings(t *testing.T) {
 		t.Errorf("expected %s to eq %s", res, expected)
 	}
 }
+
+func TestCopyMap(t *testing.T) {
+	origin := map[string][]string{
+		"A": []string{"a1", "b1", "c1"},
+		"B": []string{"a2", "b2", "c2"},
+	}
+	copied := CopyMap(origin)
+	copied["C"] = []string{"a3", "b3", "c3"}
+
+	if len(copied) == len(origin) {
+		t.Errorf("copied: %s, origin: %s", copied, origin)
+	}
+}
