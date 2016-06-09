@@ -38,7 +38,7 @@ func (j *JSONRPC) ResponseFile() (string, map[string][]string) {
 	}
 
 	dict := j.dictionary()
-	files := j.nominatedFiles(dict)
+	files := j.nominatedFiles(CopyMap(dict))
 
 	for _, file := range files {
 		if IsFileExist(file) {
