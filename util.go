@@ -31,3 +31,16 @@ func ReverseStrings(src []string) []string {
 
 	return dst
 }
+
+// CopyMap returns copied map
+func CopyMap(m map[string][]string) map[string][]string {
+	copiedMap := make(map[string][]string)
+
+	for k, v := range m {
+		slice := make([]string, len(v))
+		copy(slice, v)
+		copiedMap[k] = slice
+	}
+
+	return copiedMap
+}
