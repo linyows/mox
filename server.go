@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"mime"
@@ -21,7 +22,6 @@ func handle(w http.ResponseWriter, r *http.Request) {
 
 	log.Print("[INFO] " + fmt.Sprintf("%s - \"%s %s %s\" - \"%s\"",
 		r.RemoteAddr, r.Method, r.RequestURI, r.Proto, strings.Join(r.Header["User-Agent"], ",")))
-	log.Print("[DEBUG] " + fmt.Sprintf("%#v", Config()))
 
 	if Config().Delay > 0 {
 		log.Print("[DEBUG] " + fmt.Sprintf("sleep %vs ...", Config().Delay))
@@ -58,9 +58,14 @@ func handle(w http.ResponseWriter, r *http.Request) {
 
 	if file != "" && len(dict["keys"]) > 0 {
 		tpl := template.Must(template.ParseFiles(file))
-		tpl.Execute(w, CombineKeyValues(dict["keys"], dict["values"]))
+		bufbody := new(bytes.Buffer)
+		tpl.Execute(bufbody, CombineKeyValues(dict["keys"], dict["values"]))
+		body := bufbody.String()
+		log.Print("[DEBUG] " + fmt.Sprintf("Response: \n%s", body))
+		fmt.Fprint(w, body)
 	} else if file == "" {
-		fmt.Fprint(w, "404")
+		log.Print("[DEBUG] " + fmt.Sprintf("Response: %s", "404: Not Found"))
+		fmt.Fprint(w, "404: Not Found")
 	} else {
 		http.ServeFile(w, r, file)
 	}
@@ -68,6 +73,8 @@ func handle(w http.ResponseWriter, r *http.Request) {
 
 // Run server
 func Run() {
+	log.Print("[DEBUG] " + fmt.Sprintf("%#v", Config()))
+
 	s := &http.Server{
 		Addr:           Config().Addr,
 		Handler:        http.HandlerFunc(handle),

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -30,8 +31,12 @@ type jsonRPCRequest struct {
 
 // ResponseFile returns file path
 func (j *JSONRPC) ResponseFile() (string, map[string][]string) {
-	decoder := json.NewDecoder(j.req.Body)
+	bufbody := new(bytes.Buffer)
+	bufbody.ReadFrom(j.req.Body)
+	body := bufbody.String()
+	log.Print("[DEBUG] " + fmt.Sprintf("Request: %s", body))
 
+	decoder := json.NewDecoder(strings.NewReader(body))
 	err := decoder.Decode(&j.rpcReq)
 	if err != nil {
 		log.Print("[ERROR] " + fmt.Sprintf("Error json decode: \n%s", err))
