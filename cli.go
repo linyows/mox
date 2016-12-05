@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	flag "github.com/golang-basic/docker/pkg/mflag"
+	flag "github.com/linyows/mflag"
 )
 
 // Exit codes are int values that represent an exit code for a particular error.
