@@ -9,12 +9,12 @@ import (
 )
 
 // Mox starts server.
-func Mox(ops Ops) int {
+func Mox(opt Options) int {
 	c := DefaultConfig()
-	c.Set(ops)
+	c.Set(opt)
 
-	if ops.Config != "" {
-		config, err := LoadConfig(ops.Config)
+	if opt.Config != "" {
+		config, err := LoadConfig(opt.Config)
 		if err != nil {
 			log.Print("[ERROR] " + fmt.Sprintf("Error loading CLI configuration: \n%s", err))
 			return 1

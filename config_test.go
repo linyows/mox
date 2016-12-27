@@ -68,7 +68,7 @@ func TestMerge(t *testing.T) {
 
 func TestSet(t *testing.T) {
 	c := DefaultConfig()
-	opt := Ops{
+	opt := Options{
 		Root: "/mox",
 	}
 	c.Set(opt)

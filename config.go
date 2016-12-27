@@ -100,8 +100,8 @@ func (c *config) Merge(otherConfig *config) *config {
 	return c
 }
 
-// Set sets from Ops
-func (c *config) Set(o Ops) *config {
+// Set sets from Options
+func (c *config) Set(o Options) *config {
 	if o.Root != "" {
 		c.Root = o.Root
 	}
