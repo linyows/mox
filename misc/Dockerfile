@@ -13,6 +13,6 @@ ENV MOX_CONF="/mox/mox.conf" \
 
 RUN mkdir /mox
 WORKDIR /mox
-ADD ../fixtures/rest /mox
+ADD ../testdata/rest /mox
 
 CMD ["supervisord", "-n"]
