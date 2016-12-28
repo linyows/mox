@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	flag "github.com/docker/docker/pkg/mflag"
+	flag "github.com/linyows/mflag"
 )
 
 // Exit codes are int values that represent an exit code for a particular error.
@@ -47,12 +47,12 @@ Example:
 // Run invokes the CLI with the given arguments.
 func (cli *CLI) Run(args []string) int {
 	flags := flag.NewFlagSet(Name, flag.ContinueOnError)
-	flags.SetOutput(cli.errStream)
+	flags.SetOutput(cli.outStream)
 
 	flags.Usage = func() {
-		fmt.Fprintf(cli.errStream, usageText)
+		fmt.Fprintf(cli.outStream, usageText)
 		flags.PrintDefaults()
-		fmt.Fprint(cli.errStream, exampleText)
+		fmt.Fprint(cli.outStream, exampleText)
 	}
 
 	conf := os.Getenv(strings.ToUpper(Name) + "_CONF")
@@ -72,7 +72,7 @@ func (cli *CLI) Run(args []string) int {
 	}
 
 	if opt.Version {
-		fmt.Fprintf(cli.errStream, "%s version %s\n", Name, Version)
+		fmt.Fprintf(cli.outStream, "%s version %s\n", Name, Version)
 		return ExitCodeOK
 	}
 

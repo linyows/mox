@@ -1,7 +1,7 @@
-FROM golang:1.6
+FROM golang:1.7
 
 RUN apt-get update -qq && apt-get install -y -qq wget unzip supervisor
-RUN wget -q https://github.com/linyows/mox/releases/download/v0.2.1/linux_amd64.zip && \
+RUN wget -q https://github.com/linyows/mox/releases/download/v0.3.0/linux_amd64.zip && \
     unzip -q linux_amd64.zip && \
     rm -rf linux_amd64.zip && \
     mv mox /usr/bin/
