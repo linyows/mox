@@ -22,8 +22,8 @@ type CLI struct {
 	outStream, errStream io.Writer
 }
 
-// Ops structure
-type Ops struct {
+// Options structure
+type Options struct {
 	Config   string
 	Root     string
 	Protocol string
@@ -58,23 +58,23 @@ func (cli *CLI) Run(args []string) int {
 	conf := os.Getenv(strings.ToUpper(Name) + "_CONF")
 	c := DefaultConfig()
 
-	var ops Ops
-	flags.StringVar(&ops.Config, []string{"c", "-config"}, conf, "config path")
-	flags.StringVar(&ops.Root, []string{"r", "-root"}, c.Root, "document root path")
-	flags.StringVar(&ops.Addr, []string{"a", "-addr"}, c.Addr, "network address with port")
-	flags.StringVar(&ops.LogLevel, []string{"l", "-log-level"}, c.LogLevel, "log level")
-	flags.IntVar(&ops.Delay, []string{"d", "-delay"}, c.Delay, "delay seconds for response")
-	flags.StringVar(&ops.Protocol, []string{"p", "-protocol"}, c.Protocol, "api protocol -- REST or JSON-RPC")
-	flags.BoolVar(&ops.Version, []string{"v", "-version"}, false, "print the version and exit")
+	var opt Options
+	flags.StringVar(&opt.Config, []string{"c", "-config"}, conf, "config path")
+	flags.StringVar(&opt.Root, []string{"r", "-root"}, c.Root, "document root path")
+	flags.StringVar(&opt.Addr, []string{"a", "-addr"}, c.Addr, "network address with port")
+	flags.StringVar(&opt.LogLevel, []string{"l", "-log-level"}, c.LogLevel, "log level")
+	flags.IntVar(&opt.Delay, []string{"d", "-delay"}, c.Delay, "delay seconds for response")
+	flags.StringVar(&opt.Protocol, []string{"p", "-protocol"}, c.Protocol, "api protocol -- REST or JSON-RPC")
+	flags.BoolVar(&opt.Version, []string{"v", "-version"}, false, "print the version and exit")
 
 	if err := flags.Parse(args[1:]); err != nil {
 		return ExitCodeError
 	}
 
-	if ops.Version {
+	if opt.Version {
 		fmt.Fprintf(cli.outStream, "%s version %s\n", Name, Version)
 		return ExitCodeOK
 	}
 
-	return Pox(ops)
+	return Mox(opt)
 }
