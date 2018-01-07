@@ -1,11 +1,19 @@
 language: go
-go:
-  - 1.7
-  - 1.6
+matrix:
+  include:
+    - os: linux
+      go: 1.6.x
+    - os: linux
+      go: 1.7.x
+    - os: linux
+      go: 1.8.x
+    - os: osx
+      go: 1.8.x
 script:
   - make test
   - make cover
 after_script:
-- goveralls -coverprofile=coverage.out
+  - goveralls -coverprofile=coverage.out
 notifications:
   slack: linyows:2oeZ2qcLnaMjbnEYodwEXKTr
+  email: false
