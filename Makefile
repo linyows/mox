@@ -10,7 +10,7 @@ deps:
 	go get -u github.com/linyows/mflag
 	go get github.com/hashicorp/logutils
 	go get github.com/mattn/go-scan
-	go get github.com/golang/lint/golint
+	go get -u golang.org/x/lint/golint
 	go get golang.org/x/tools/cmd/cover
 	go get github.com/pierrre/gotestcover
 	go get github.com/mattn/goveralls
