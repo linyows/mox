@@ -3,9 +3,6 @@ TEST ?= ./...
 default: build
 
 deps:
-	go get -u github.com/linyows/mflag
-	go get github.com/hashicorp/logutils
-	go get github.com/mattn/go-scan
 	go get -u golang.org/x/lint/golint
 	go get golang.org/x/tools/cmd/cover
 	go get github.com/goreleaser/goreleaser
