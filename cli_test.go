@@ -17,7 +17,7 @@ func TestRun_versionFlag(t *testing.T) {
 		t.Errorf("expected %d to eq %d", status, ExitCodeOK)
 	}
 
-	expected := fmt.Sprintf("mox version %s", Version)
+	expected := fmt.Sprintf("mox version %s", version)
 	if !strings.Contains(outStream.String(), expected) {
 		t.Errorf("expected %q to eq %q", outStream.String(), expected)
 	}

@@ -31,7 +31,7 @@ func DefaultConfig() *config {
 	}
 
 	instance = &config{
-		Root:        "/var/www/" + Name,
+		Root:        "/var/www/mox",
 		Addr:        "localhost:8080",
 		Protocol:    "REST",
 		Delay:       0,
@@ -40,7 +40,7 @@ func DefaultConfig() *config {
 		Header: map[string]string{
 			"Server":       hostname,
 			"Content-Type": "application/octet-stream",
-			"X-Served-By":  Name,
+			"X-Served-By":  "mox",
 		},
 	}
 
@@ -123,7 +123,7 @@ func (c *config) Set(o Options) *config {
 
 // SetFromEnv sets from env variables
 func (c *config) SetFromEnv() *config {
-	upperName := strings.ToUpper(Name)
+	upperName := strings.ToUpper("mox")
 
 	root := os.Getenv(upperName + "_ROOT")
 	if root != "" {

@@ -46,7 +46,7 @@ Example:
 
 // Run invokes the CLI with the given arguments.
 func (cli *CLI) Run(args []string) int {
-	flags := flag.NewFlagSet(Name, flag.ContinueOnError)
+	flags := flag.NewFlagSet("mox", flag.ContinueOnError)
 	flags.SetOutput(cli.outStream)
 
 	flags.Usage = func() {
@@ -55,7 +55,7 @@ func (cli *CLI) Run(args []string) int {
 		fmt.Fprint(cli.outStream, exampleText)
 	}
 
-	conf := os.Getenv(strings.ToUpper(Name) + "_CONF")
+	conf := os.Getenv(strings.ToUpper("mox") + "_CONF")
 	c := DefaultConfig()
 
 	var opt Options
@@ -72,7 +72,7 @@ func (cli *CLI) Run(args []string) int {
 	}
 
 	if opt.Version {
-		fmt.Fprintf(cli.outStream, "%s version %s\n", Name, Version)
+		fmt.Fprintf(cli.outStream, "mox version %s\n", version)
 		return ExitCodeOK
 	}
 
