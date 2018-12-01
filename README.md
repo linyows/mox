@@ -3,15 +3,17 @@ Mox
 
 <strong>Mox</strong> is a very simple mock server as web api.
 
-[![Travis](https://img.shields.io/travis/linyows/mox.svg?style=flat-square)][travis]
-[![GitHub release](http://img.shields.io/github/release/linyows/mox.svg?style=flat-square)][release]
-[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)][license]
-[![Go Documentation](http://img.shields.io/badge/go-documentation-blue.svg?style=flat-square)][godocs]
+[![Travis](https://img.shields.io/travis/linyows/mox.svg?style=for-the-badge)][travis]
+[![codecov](https://img.shields.io/codecov/c/github/linyows/mox.svg?style=for-the-badge)][codecov]
+[![GitHub release](http://img.shields.io/github/release/linyows/mox.svg?style=for-the-badge)][release]
+[![Go Documentation](http://img.shields.io/badge/go-documentation-blue.svg?style=for-the-badge)][godocs]
+[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)][license]
 
 [travis]: https://travis-ci.org/linyows/mox
+[codecov]: https://codecov.io/gh/linyows/mox
 [release]: https://github.com/linyows/mox/releases
-[license]: https://github.com/linyows/mox/blob/master/LICENSE
 [godocs]: http://godoc.org/github.com/linyows/mox
+[license]: https://github.com/linyows/mox/blob/master/LICENSE
 
 Description
 -----------
