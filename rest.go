@@ -20,7 +20,7 @@ type REST struct {
 func (re *REST) ResponseFile() (string, map[string][]string) {
 	reqURI := strings.Trim(re.req.RequestURI, "/") + re.ResponseExt()
 	dir, file := path.Split(reqURI)
-	src := path.Join(Config().Root, dir, re.localFormat(file))
+	src := path.Join(GetConfig().Root, dir, re.localFormat(file))
 
 	if IsFileExist(src) {
 		return src, make(map[string][]string)
@@ -52,7 +52,7 @@ func (re *REST) ResponseExt() string {
 		if len(clientMimes) != 0 {
 			mimeType = clientMimes[0]
 		} else {
-			mimeType = Config().Header["Content-Type"]
+			mimeType = GetConfig().Header["Content-Type"]
 		}
 		exts, err := mime.ExtensionsByType(mimeType)
 		if err != nil {
@@ -88,7 +88,7 @@ func (re *REST) dictionary(URI string) map[string][]string {
 		params[v] = arrayPath[next]
 	}
 
-	for _, v := range Config().Namespaces {
+	for _, v := range GetConfig().Namespaces {
 		if val, ok := params[v]; ok {
 			keys = append(keys, v)
 			vals = append(vals, re.removeExt(val))
@@ -113,7 +113,7 @@ func (re *REST) nominatedFiles(dict map[string][]string) []string {
 		normalPath := keys[:(count - i)]
 		virtPath := vals[(count - i):]
 		dir := strings.Join(append(normalPath, virtPath...), "/")
-		path := path.Join(Config().Root, dir, re.localFormat(Config().AnonymousID+re.ResponseExt()))
+		path := path.Join(GetConfig().Root, dir, re.localFormat(GetConfig().AnonymousID+re.ResponseExt()))
 		pathsOrderVirt = append(pathsOrderVirt, path)
 	}
 

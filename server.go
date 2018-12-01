@@ -23,12 +23,12 @@ func handle(w http.ResponseWriter, r *http.Request) {
 	log.Print("[INFO] " + fmt.Sprintf("%s - \"%s %s %s\" - \"%s\"",
 		r.RemoteAddr, r.Method, r.RequestURI, r.Proto, strings.Join(r.Header["User-Agent"], ",")))
 
-	if Config().Delay > 0 {
-		log.Print("[DEBUG] " + fmt.Sprintf("sleep %vs ...", Config().Delay))
-		time.Sleep(time.Duration(Config().Delay) * time.Second)
+	if GetConfig().Delay > 0 {
+		log.Print("[DEBUG] " + fmt.Sprintf("sleep %vs ...", GetConfig().Delay))
+		time.Sleep(time.Duration(GetConfig().Delay) * time.Second)
 	}
 
-	switch Config().Protocol {
+	switch GetConfig().Protocol {
 	case "JSON-RPC":
 		proto = &JSONRPC{
 			req: r,
@@ -39,7 +39,7 @@ func handle(w http.ResponseWriter, r *http.Request) {
 			req: r,
 		}
 	default:
-		panic(fmt.Sprintf("Error known protocol: %s", Config().Protocol))
+		panic(fmt.Sprintf("Error known protocol: %s", GetConfig().Protocol))
 	}
 
 	file, dict := proto.ResponseFile()
@@ -48,7 +48,7 @@ func handle(w http.ResponseWriter, r *http.Request) {
 	log.Print("[DEBUG] " + fmt.Sprintf("Dict: %s", dict))
 
 	t := "Content-Type"
-	for k, v := range Config().Header {
+	for k, v := range GetConfig().Header {
 		if k == t {
 			w.Header().Set(t, mime.TypeByExtension(proto.ResponseExt()))
 		} else {
@@ -73,10 +73,10 @@ func handle(w http.ResponseWriter, r *http.Request) {
 
 // Run server
 func Run() {
-	log.Print("[DEBUG] " + fmt.Sprintf("%#v", Config()))
+	log.Print("[DEBUG] " + fmt.Sprintf("%#v", GetConfig()))
 
 	s := &http.Server{
-		Addr:           Config().Addr,
+		Addr:           GetConfig().Addr,
 		Handler:        http.HandlerFunc(handle),
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,

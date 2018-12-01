@@ -9,10 +9,8 @@ import (
 	"github.com/hashicorp/hcl"
 )
 
-var instance *config
-
 // Config is the structure of the configuration for CLI.
-type config struct {
+type Config struct {
 	Root        string
 	Addr        string
 	Protocol    string
@@ -23,14 +21,16 @@ type config struct {
 	Namespaces  []string
 }
 
+var instance *Config
+
 // DefaultConfig returns default structure.
-func DefaultConfig() *config {
+func DefaultConfig() *Config {
 	hostname, err := os.Hostname()
 	if err != nil {
 		panic(err)
 	}
 
-	instance = &config{
+	instance = &Config{
 		Root:        "/var/www/mox",
 		Addr:        "localhost:8080",
 		Protocol:    "REST",
@@ -48,7 +48,7 @@ func DefaultConfig() *config {
 }
 
 // LoadConfig loads the CLI configuration from conf files.
-func LoadConfig(path string) (*config, error) {
+func LoadConfig(path string) (*Config, error) {
 	// Read the HCL file and prepare for parsing
 	d, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -62,7 +62,7 @@ func LoadConfig(path string) (*config, error) {
 	}
 
 	// Build up the result
-	var result config
+	var result Config
 	if err := hcl.DecodeObject(&result, obj); err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func LoadConfig(path string) (*config, error) {
 }
 
 // Merge merges other configurations it self.
-func (c *config) Merge(otherConfig *config) *config {
+func (c *Config) Merge(otherConfig *Config) *Config {
 	if otherConfig.Root != "" {
 		c.Root = otherConfig.Root
 	}
@@ -101,7 +101,7 @@ func (c *config) Merge(otherConfig *config) *config {
 }
 
 // Set sets from Options
-func (c *config) Set(o Options) *config {
+func (c *Config) Set(o Options) *Config {
 	if o.Root != "" {
 		c.Root = o.Root
 	}
@@ -122,7 +122,7 @@ func (c *config) Set(o Options) *config {
 }
 
 // SetFromEnv sets from env variables
-func (c *config) SetFromEnv() *config {
+func (c *Config) SetFromEnv() *Config {
 	upperName := strings.ToUpper("mox")
 
 	root := os.Getenv(upperName + "_ROOT")
@@ -138,8 +138,8 @@ func (c *config) SetFromEnv() *config {
 	return c
 }
 
-// Config returns config singleton structure.
-func Config() *config {
+// GetConfig returns config singleton structure.
+func GetConfig() *Config {
 	if instance == nil {
 		return DefaultConfig()
 	}

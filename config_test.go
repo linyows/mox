@@ -87,12 +87,12 @@ func TestSetFromEnv(t *testing.T) {
 
 func TestConfig(t *testing.T) {
 	c1 := DefaultConfig()
-	c2 := Config()
+	c2 := GetConfig()
 	if c1 != c2 {
 		t.Errorf("It is not same.")
 	}
 	c2.Root = "/mox"
-	c3 := Config()
+	c3 := GetConfig()
 	if c3.Root != "/mox" {
 		t.Errorf("It is not singleton.")
 	}

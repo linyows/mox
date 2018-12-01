@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/mattn/go-scan"
+	scan "github.com/mattn/go-scan"
 )
 
 // JSONRPC is structure
@@ -63,7 +63,7 @@ func (j *JSONRPC) ResponseExt() string {
 	ext := filepath.Ext(j.req.RequestURI)
 
 	if ext == "" {
-		mimeType := Config().Header["Content-Type"]
+		mimeType := GetConfig().Header["Content-Type"]
 
 		exts, err := mime.ExtensionsByType(mimeType)
 		if err != nil {
@@ -84,7 +84,7 @@ func (j *JSONRPC) dictionary() map[string][]string {
 	var vals []string
 	var s string
 
-	for _, v := range Config().Namespaces {
+	for _, v := range GetConfig().Namespaces {
 		err := scan.ScanTree(j.rpcReq.Params, "/"+v, &s)
 		if err != nil {
 			log.Print("[DEBUG] " + fmt.Sprintf("JSON parsed, but \"%s\" not found -- %s", v, err))
@@ -109,14 +109,14 @@ func (j *JSONRPC) nominatedFiles(dict map[string][]string) []string {
 	vals := dict["values"]
 	count := len(dict["keys"])
 
-	src = path.Join(Config().Root, j.req.RequestURI, j.rpcReq.Method+j.ResponseExt())
+	src = path.Join(GetConfig().Root, j.req.RequestURI, j.rpcReq.Method+j.ResponseExt())
 	pathsOrderVirt = append(pathsOrderVirt, src)
 
 	for i := 0; i <= count; i++ {
 		normalPath := keys[:(count - i)]
 		virtPath := vals[(count - i):]
 		dir := strings.Join(append(normalPath, virtPath...), "/")
-		src = path.Join(Config().Root, j.req.RequestURI, dir, j.rpcReq.Method+j.ResponseExt())
+		src = path.Join(GetConfig().Root, j.req.RequestURI, dir, j.rpcReq.Method+j.ResponseExt())
 		pathsOrderVirt = append(pathsOrderVirt, src)
 	}
 
