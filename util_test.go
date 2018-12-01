@@ -8,7 +8,7 @@ import (
 func TestIsFileExist(t *testing.T) {
 	res := IsFileExist("/tmp/__foobarbaz")
 	if res != false {
-		t.Errorf("expected %s to eq %s", res, false)
+		t.Errorf("expected %t to eq false", res)
 	}
 }
 
